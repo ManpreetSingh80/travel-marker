@@ -1,0 +1,51 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    // End a running background task
+    {
+        "key": "shift+cmd+x",
+        "command": "workbench.action.tasks.terminate"
+    },
+    // Show Source Control
+    {
+        "key": "shift+cmd+g",
+        "command": "workbench.view.scm"
+    },
+    {
+        "key": "ctrl+shift+g",
+        "command": "-workbench.view.scm"
+    },
+    // Lint
+    {
+        "key": "ctrl+shift+l",
+        "command": "workbench.action.tasks.runTask",
+        "args": "lint"
+    },
+    // Tests
+    {
+        "key": "shift+cmd+t",
+        "command": "workbench.action.tasks.test"
+    },
+    // E2E Tests
+    {
+        "key": "ctrl+shift+e",
+        "command": "workbench.action.tasks.runTask",
+        "args": "e2e"
+    },
+    // Serve app
+    {
+        "key": "shift+cmd+s",
+        "command": "workbench.action.tasks.runTask",
+        "args": "serve"
+    },
+    // Open app
+    {
+        "key": "shift+cmd+o",
+        "command": "workbench.action.tasks.runTask",
+        "args": "open"
+    },
+    // Go to symbol (remapped)
+    {
+        "key": "ctrl+shift+o",
+        "command": "workbench.action.gotoSymbol"
+    }
+]

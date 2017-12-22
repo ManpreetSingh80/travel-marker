@@ -1,0 +1,37 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+    // End a running background task
+    {
+        "key": "ctrl+shift+x",
+        "command": "workbench.action.tasks.terminate"
+    },
+    // Lint
+    {
+        "key": "ctrl+shift+l",
+        "command": "workbench.action.tasks.runTask",
+        "args": "lint"
+    },
+    // Tests
+    {
+        "key": "ctrl+shift+t",
+        "command": "workbench.action.tasks.test"
+    },
+    // E2E Tests
+    {
+        "key": "ctrl+shift+e",
+        "command": "workbench.action.tasks.runTask",
+        "args": "e2e"
+    },
+    // Serve app
+    {
+        "key": "ctrl+shift+s",
+        "command": "workbench.action.tasks.runTask",
+        "args": "serve"
+    },
+    // Open app
+    {
+        "key": "ctrl+shift+o",
+        "command": "workbench.action.tasks.runTask",
+        "args": "open"
+    }
+]

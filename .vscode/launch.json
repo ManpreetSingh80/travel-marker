@@ -1,0 +1,22 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
+      "sourceMaps": true,
+      "runtimeArgs": [
+        "-i"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "outFiles": [
+        "${workspaceRoot}/dist/**/*"
+      ],
+      "cwd": "${workspaceRoot}"
+    }
+  ]
+}
