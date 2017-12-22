@@ -10,13 +10,13 @@ A google maps library to replay gps locations.
 - Compute intermediate gps points for smooth animation
 
 ## Installation
-```
+```bash
   npm install travel-marker
 ```
 
 For browser
 
-```
+```typescript
   <script src="https://unpkg.com/travel-marker/travel-marker.umd.js" async>
 
   var TravelMarker = travelmarker.TravelMarker;
@@ -26,7 +26,7 @@ For browser
 
 ### Creating a marker
 
-```
+```typescript
   // options
   var options = {
     map: map,  // map object
@@ -38,18 +38,18 @@ For browser
 ```
 
 ### Add locations
-```
+```typescript
   var locationArray = [new google.maps.Latlng(74,23), new google.maps.LatLng(74.02,23.02), new google.maps.LatLng(74.04, 23.04)];
   marker.addLocations(locationArray);
 ```
 
 ### Play Animation
-```
+```typescript
 marker.play();
 ```
 
 ### Pause animation.
-```
+```typescript
 marker.pause();
 ```
 
