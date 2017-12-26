@@ -1,0 +1,400 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>"Animated" Marker</title>
+    <script src="https://maps.googleapis.com/maps/api/js?signed_in=false"></script>
+    <script src="../dist/travel-marker.umd.js"></script>
+  </head>
+  <body>
+    <style>
+      html,body,#map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+
+    <div id="map-canvas"></div>
+
+    <script>
+
+var trips = {
+};
+
+trips.gmap = (function (window, document) {
+
+  var map,speed = 15,interval = 10,numDelta = 0, delta,path = [], carMarker = null, carImage = 'https://i.stack.imgur.com/lDrin.png',index = 0;
+  var deltaIndex = 0,playing = false,deltaCurr,deltaLast,angle = 0;
+
+ function CustomMarker(opts) {
+   this.setMap(opts.map);
+   console.log(opts);
+   this.position = opts.position;
+   // this.setValues(opts);
+    this.div_ = null;
+  }
+
+  function init(options) {
+    if (!options || !options.map) {
+      return 'incorrect input';
+    }
+    map = options.map;
+    if (options.speed && !isNaN(options.speed)) {
+      speed = options.speed;
+    }
+    if (options.interval && !isNaN(options.interval)) {
+      interval = options.interval;
+    }
+
+   if (options.imageSrc) {
+     carImage = options.imageSrc;
+   }
+
+   // console.log(carMarker);
+   initOverlay();
+
+  };
+
+  function initOverlay() {
+
+
+  CustomMarker.prototype = new google.maps.OverlayView();
+  /**
+       * onAdd is called when the map's panes are ready and the overlay has been
+       * added to the map.
+       */
+      CustomMarker.prototype.onAdd = function() {
+
+        var div = document.createElement('div');
+        div.style.borderStyle = 'none';
+        div.style.borderWidth = '0px';
+        div.style.position = 'absolute';
+
+        // Create the img element and attach it to the div.
+        var img = document.createElement('img');
+        img.src = carImage;
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.position = 'absolute';
+        div.appendChild(img);
+
+        this.div_ = div;
+
+        // Add the element to the "overlayLayer" pane.
+        var panes = this.getPanes();
+        panes.overlayLayer.appendChild(div);
+        console.log(div);
+      };
+
+    CustomMarker.prototype.setPosition = function(pos) {
+      this.position = new google.maps.LatLng(pos.lat, pos.lng);
+      this.draw();
+    };
+
+    CustomMarker.prototype.getPosition = function() {
+      return this.position;
+    };
+
+      CustomMarker.prototype.draw = function() {
+
+        // We use the south-west and north-east
+        // coordinates of the overlay to peg it to the correct position and size.
+        // To do this, we need to retrieve the projection from the overlay.
+        // overlayProjection = this.getProjection();
+        var div = this.div_;
+        var point;
+        // if (this.position) {
+        //   console.log('this.position', this.position);
+        // }
+        // var myPos = this.position !== undefined ? this.position : pos;
+        // console.log('myPos', myPos);
+        if(this.position) {
+          point = this.getProjection().fromLatLngToDivPixel(this.position);
+        }
+        console.log(point);
+        console.log('marker anglr', angle);
+        if (point) {
+          div.style.left = point.x -15 + 'px';
+          div.style.top = point.y -15 + 'px';
+          div.style.width = '30px';
+          div.style.height = '30px';
+          div.style.transform = 'rotate(' + angle + 'deg)';
+          div.style.zIndex = '9999999';
+        }
+        /*
+        // Retrieve the south-west and north-east coordinates of this overlay
+        // in LatLngs and convert them to pixel coordinates.
+        // We'll use these coordinates to resize the div.
+        var sw = overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
+        var ne = overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
+
+        // Resize the image's div to fit the indicated dimensions.
+        var div = this.div_;
+        div.style.left = sw.x + 'px';
+        div.style.top = ne.y + 'px';
+        div.style.width = (ne.x - sw.x) + 'px';
+        div.style.height = (sw.y - ne.y) + 'px';
+        */
+      };
+
+      // The onRemove() method will be called automatically from the API if
+      // we ever set the overlay's map property to 'null'.
+      CustomMarker.prototype.onRemove = function() {
+        // this.div_.parentNode.removeChild(this.div_);
+        // this.div_ = null;
+      };
+    return CustomMarker.prototype;
+    };
+
+  function addLocation(locs) {
+    if (!Array.isArray(locs)) {
+      console.log('not array');
+      return 'input must be an array';
+    }
+    locs.forEach(loc => {
+      if (loc.lat && loc.lng) {
+        path.push(loc);
+      }
+    });
+    if (!carMarker && path.length) {
+      carMarker = new CustomMarker({
+        map: map,
+        position: path[0]
+      });
+    }
+    console.log('path', path);
+  };
+
+
+  function play() {
+    playing = true;
+    animate();
+  };
+
+  function pause() {
+    playing = false;
+    animate();
+  };
+
+  function latlngDistance(p1,p2) {
+    var EarthRadiusMeters = 6378137.0; // meters
+    var dLat = (p2.lat - p1.lat) * Math.PI / 180;
+    var dLon = (p2.lng - p1.lng) * Math.PI / 180;
+    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(p1.lat * Math.PI / 180 ) * Math.cos(p2.lat * Math.PI / 180 ) *
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    var d = EarthRadiusMeters * c;
+    return d;
+  };
+
+  function getAngle(p1, p2) {
+    var f1 = Math.PI * p1.lat() / 180;
+    var f2 = Math.PI * p2.lat() / 180;
+    var dl = Math.PI * (p2.lng() - p1.lng()) / 180;
+    return Math.atan2(Math.sin(dl) * Math.cos(f2) , Math.cos(f1) * Math.sin(f2) - Math.sin(f1) * Math.cos(f2) * Math.cos(dl));
+  }
+
+  function setRotation() {
+
+  };
+
+
+  function updateMarker() {
+    if (index === path.length - 1) {
+      return 'no more points to show';
+    }
+
+    if (!playing) {
+      return 'paused';
+    }
+
+    if (!carMarker) {
+      setTimeout(updateMarker, 100);
+    }
+
+    var curr = carMarker.getPosition();
+    var next = path[++index];
+    var distance = latlngDistance({lat: curr.lat(), lng: curr.lng()}, {lat: next.lat(), lng: next.lng()});
+    console.log('update car', next.lat(), next.lng(), distance);
+    angle = getAngle(curr, next) * 180 / Math.PI;
+    console.log('angle', angle);
+    numDelta = parseInt((distance * (1000/ interval)) / speed);
+    console.log(numDelta);
+    if (!numDelta) {
+      updateMarker();
+    }
+    var deltaLat = (next.lat() - curr.lat()) / numDelta;
+    var deltaLng = (next.lng() - curr.lng()) / numDelta;
+    delta = {lat: deltaLat, lng: deltaLng };
+    deltaIndex = 0;
+    deltaCurr = { lat: curr.lat(), lng: curr.lng() };
+    deltaLast = { lat: next.lat(), lng: next.lng() };
+
+    setTimeout(animate, interval);
+
+  }
+
+ function animate() {
+   if (!deltaCurr || !delta || !deltaLast) {
+     console.log('update marker');
+     updateMarker();
+     return;
+   }
+   if (!playing) {
+     console.log('paused');
+     return 'paused';
+   }
+   deltaCurr.lat += delta.lat;
+   deltaCurr.lng += delta.lng;
+   var newPos = { lat: deltaCurr.lat, lng: deltaCurr.lng };
+   console.log('new pos', newPos);
+   carMarker.setPosition(newPos);
+   if(deltaIndex != numDelta) {
+     deltaIndex++;
+     setTimeout(animate, interval);
+   } else {
+     console.log('last', deltaLast);
+     carMarker.setPosition(deltaLast);
+     setTimeout(updateMarker, interval);
+   }
+ };
+
+ function test() {
+   // var mapDiv = map.__gm.R;
+   // var i = mapDiv.getElementsByTagName('img');
+   console.log('test path', path)
+   a = new CustomMarker({
+     map: map,
+     position: path[0]
+   });
+   a.setPosition(path[path.length -1]);
+  // console.log('marker',carMarker.__gm.Id);
+  //  i.forEach(img => console.log(img.src));
+   // console.log(i, i.length);
+   // for(a = 0; a< i.length; a++) {
+   //   console.log(i[a].src)
+   // }
+   // carMarker.setPosition(path[path.length -1]);
+ }
+
+  return {
+        init: init,
+        addLocation: addLocation,
+        play: play,
+        pause: pause,
+        test: test
+    };
+
+})(window, document);
+
+var line,map;
+var directionsService = new google.maps.DirectionsService();
+var TravelMarker  = travelMarker.TravelMarker;
+
+function initialize() {
+
+  var mapOptions = {
+    zoom: 16,
+    center: new google.maps.LatLng(51.512802, -0.091324),
+    styles: [{"featureType":"all","elementType":"all","stylers":[{"saturation":-100},{"gamma":0.5}]},{"featureType":"landscape","elementType":"all","stylers":[{"lightness":"49"},{"gamma":"1.53"},{"weight":"1.00"},{"visibility":"on"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"on"},{"lightness":"36"},{"gamma":"0.96"}]},{"featureType":"road.arterial","elementType":"all","stylers":[{"lightness":"50"}]},{"featureType":"road.local","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"water","elementType":"all","stylers":[{"hue":"#ff0000"}]}]
+  };
+
+  map = new google.maps.Map(document.getElementById('map-canvas'),
+      mapOptions);
+
+  var lineSymbol = {
+    path: 'M 0,-24 6,-7 24,-7 10,4 15,21 0,11 -15,21 -10,4 -24,-7 -6,-7 z',
+    fillColor: 'black',
+    fillOpacity: 1,
+    scale: 2.75/4,
+    strokeColor: 'black',
+    rotation: 0
+  };
+
+  line = new google.maps.Polyline({
+      strokeOpacity: 0.5,
+      path: [],
+      map: map
+    });
+
+  calcRoute();
+/*
+console.log(TravelMarker);
+  var marker = new TravelMarker({
+    map: map,
+  });
+  console.log(marker, marker.echo('test'));*/
+  // animateIcon();
+}
+
+function initRoute() {
+  var route = line.getPath().b;
+  console.log('route',route);
+  // carMarker = new google.maps.Marker({
+  //   map: map,
+  //   position: line.getPath().getAt(0),
+  //   // draggable: true,
+  //   title: 'car',
+  //   optimized: false,
+  //   icon: 'https://i.stack.imgur.com/lDrin.png'
+  // })
+  console.log(TravelMarker);
+  console.log(map);
+  var marker = new TravelMarker({
+    map: map,
+    speed: 15,
+    interval: 10,
+    // markerType: 'overlay'
+  });
+  console.log(marker);
+  marker.addLocation(route);
+  // marker.addListener('click', function() {alert('clicked')});
+  // setTimeout(() => marker.play(), 2000);
+  // trips.gmap.init({
+  //   map: map,
+  //   interval: 20,
+  //   speed: 35,
+  //   // marker: carMarker
+  // });
+  // trips.gmap.addLocation(route);
+  // trips.gmap.test();
+  // var j = document.getElementsByTagName('img');
+  // console.log(j);
+  // for (var i =0; i < j.length; i++) {
+  //   console.log(j[i].src);
+  // }
+  // setTimeout(trips.gmap.play, 2000);
+}
+
+function calcRoute() {
+  var start = new google.maps.LatLng(51.513237, -0.099102);
+  var end = new google.maps.LatLng(51.514786, -0.080799);
+  var request = {
+      origin:start,
+      destination:end,
+      travelMode: google.maps.TravelMode.BICYCLING
+  };
+  directionsService.route(request, (response, status) => {
+    if (status == google.maps.DirectionsStatus.OK) {
+      var legs = response.routes[0].legs;
+      for (i=0;i<legs.length;i++) {
+        var steps = legs[i].steps;
+        for (j=0;j<steps.length;j++) {
+          var nextSegment = steps[j].path;
+          for (k=0;k<nextSegment.length;k++) {
+            line.getPath().push(nextSegment[k]);
+          }
+        }
+      }
+      initRoute();
+    }
+  });
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+
+    </script>
+  </body>
+</html>

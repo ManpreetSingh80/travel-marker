@@ -22,9 +22,9 @@ export class TravelMarker {
       offsetAngle: 0,
       imageUrl: 'https://i.stack.imgur.com/lDrin.png',
       imageWidth: 36,
-      imageHeight: 58
+      imageHeight: 58,
+      rotation: false
     },
-    rotation: false,
     line: null
   };
   private defaultMarkerOptions = {
@@ -98,6 +98,48 @@ export class TravelMarker {
   pause() {
     this.playing = false;
     this.marker.pause();
+  }
+
+  reset() {
+    this.playing = false;
+    this.marker.reset();
+  }
+
+  next() {
+    this.marker.next();
+  }
+
+  prev() {
+    this.marker.prev();
+  }
+
+  setInterval(interval: number = this.options.interval) {
+    this.options.interval = interval;
+    this.marker.setInterval(interval);
+  }
+
+  setSpeed(speed: number = this.options.speed) {
+    this.options.speed = speed;
+    this.marker.setSpeed(speed);
+  }
+
+  setMarkerOptions(options: MarkerOptions = this.options.markerOptions) {
+    if (this.options.markerType === 'default') {
+      this.options.markerOptions = Object.assign(this.options.markerOptions, options);
+      this.marker.setOptions(this.options.markerOptions);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  setOverlayOptions(options: any) {
+    if (this.options.markerType === 'overlay') {
+      this.marker.setOptions(options);
+      return true;
+    } else {
+      return false;
+    }
   }
 
   addListener(eventName: string, handler: Function): any {

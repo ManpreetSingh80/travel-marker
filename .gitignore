@@ -37,7 +37,6 @@ testem.log
 yarn-error.log
 .nyc_output
 .awcache
-/test
 
 # e2e
 /e2e/*.js

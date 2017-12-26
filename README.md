@@ -9,6 +9,12 @@ A google maps library to replay gps locations.
 - Play/Pause animation
 - Compute intermediate gps points for smooth animation
 
+## Demo
+
+### Browser
+
+[Codepen](https://codepen.io/manpreetsingh80/pen/aEpzjB)
+
 ## Installation
 ```bash
   npm install travel-marker
@@ -17,9 +23,9 @@ A google maps library to replay gps locations.
 For browser
 
 ```typescript
-  <script src="https://unpkg.com/travel-marker/travel-marker.umd.js" async>
+  <script src="https://unpkg.com/travel-marker/dist/travel-marker.umd.js" async>
 
-  var TravelMarker = travelmarker.TravelMarker;
+  var TravelMarker = travelMarker.TravelMarker;
 ```
 
 ## Usage
@@ -32,7 +38,7 @@ For browser
     map: map,  // map object
     speed: 15,  // default 10 , animation speed
     interval: 50, // default 10, marker refresh time
-    markerOptions: { position: { lat: 72, lng: 21 }}, // default { position: { lat: 0, lng: 0 }}
+    markerOptions: { title: "Travel Marker" }
   };
   var marker = new TravelMarker(options);
 ```
@@ -53,8 +59,34 @@ marker.play();
 marker.pause();
 ```
 
+### Reset animation
+```typescript
+marker.reset();
+```
+
+### Jump to next location
+```typescript
+marker.next();
+```
+
+### Jump to previous location
+```typescript
+marker.prev();
+```
+
+### Set Speed
+```typescript
+marker.setSpeed(50);
+```
+
+### Set Interval
+```typescript
+marker.setInterval(20);
+```
+
 ## Todo
 - [ ] Add listeners to marker
-- [ ] Implement next() and prev()
+- [ ] Add Examples
+- [ ] Implement setOptions()
 - [ ] Custom events for play, pause, finished, arrived
 - [ ] Add custom overlay markers with rotation

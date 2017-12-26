@@ -17,11 +17,13 @@ export class DefaultMarker implements Marker {
   private angle = 0;
   private speed = 0;
   private interval = 0;
+  private markerOptions = {};
 
   constructor(markerOptions: MarkerOptions, speed: number, interval: number, path: any[]) {
     console.log(markerOptions, speed, interval, path);
     this.marker =  <Marker> new google.maps.Marker(markerOptions);
     console.log(this.marker);
+    this.markerOptions = markerOptions;
     this.speed = speed;
     this.interval = interval;
     this.path = path;
@@ -105,6 +107,18 @@ export class DefaultMarker implements Marker {
     return this.marker.addListener(eventName, handler);
   }
 
+  setSpeed(speed = this.speed) {
+    this.speed = speed;
+  }
+
+  setInterval(interval = this.interval) {
+    this.interval = interval;
+  }
+
+  setOptions(markerOptions: any = this.markerOptions) {
+    // this.marker.setOp
+  }
+
   addLocation(locationArray: any[] = []) {
     locationArray.forEach(location => {
       if (location.lat && location.lng) {
@@ -124,9 +138,27 @@ export class DefaultMarker implements Marker {
     this.animate();
   }
 
+  reset() {
+    this.playing = false;
+    this.index = 0;
+    this.marker.setPosition(this.path[this.index]);
+  }
+
+  next() {
+    this.index++;
+    this.delta = null;
+    this.updateMarker();
+  }
+
+  prev() {
+    this.index--;
+    this.delta = null;
+    this.updateMarker();
+  }
+
 
   private updateMarker() {
-    if (this.index === this.path.length - 1) {
+    if (this.index >= this.path.length - 1) {
       return 'no more points to show';
     }
 

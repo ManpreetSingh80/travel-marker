@@ -12,7 +12,8 @@ export class CustomOverlayMarker  {
     offsetAngle: 0,
     imageUrl: '',
     imageWidth: 0,
-    imageHeight: 0
+    imageHeight: 0,
+    rotation: false
   };
   private map = null;
   // private div_: any;
@@ -169,6 +170,18 @@ export class CustomOverlayMarker  {
     });
   }
 
+  setSpeed(speed = this.speed) {
+    this.speed = speed;
+  }
+
+  setInterval(interval = this.interval) {
+    this.interval = interval;
+  }
+
+  setOptions(overlayOptions: any = this.overlayOptions) {
+    // this.marker.setOp
+  }
+
   // animation
   play() {
     this.playing = true;
@@ -180,6 +193,23 @@ export class CustomOverlayMarker  {
     this.animate();
   }
 
+  reset() {
+    this.playing = false;
+    this.index = 0;
+    this.marker.setPosition(this.path[this.index]);
+  }
+
+  next() {
+    this.index++;
+    this.delta = null;
+    this.updateMarker();
+  }
+
+  prev() {
+    this.index--;
+    this.delta = null;
+    this.updateMarker();
+  }
 
   private updateMarker() {
     if (this.index === this.path.length - 1) {

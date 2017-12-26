@@ -51,12 +51,12 @@ export interface Marker extends MVCObject {
 }
 
 export interface MarkerOptions {
-  position: LatLng|LatLngLiteral;
+  position?: LatLng|LatLngLiteral;
   title?: string;
   map?: GoogleMap;
   label?: string|MarkerLabel;
   draggable?: boolean;
-  icon?: string;
+  icon?: string | Object;
   opacity?: number;
   visible?: boolean;
   zIndex?: number;

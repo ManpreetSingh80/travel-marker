@@ -1,6 +1,6 @@
 {
   "name": "travel-marker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A google maps library to replay gps locations.",
   "keywords": ["google", "maps", "marker", "marker animation", "travelmarker", "TravelMarker", "travel marker"],
   "main": "dist/travel-marker.umd.js",

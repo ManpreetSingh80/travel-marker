@@ -15,5 +15,4 @@ export const defaultMarkerOptions: TravelMarkerOptions =  {
   markerOptions: {
     position: { lat: 0, lng: 0 }
   },
-  rotation: false
 };

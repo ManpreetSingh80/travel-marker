@@ -7,13 +7,13 @@ export interface TravelMarkerOptions {
   markerType?: 'default' | 'symbol' | 'overlay';
   markerOptions?: MarkerOptions;
   overlayOptions?: {
-    offsetX: number;
-    offsetY: number;
-    offsetAngle: number;
-    imageUrl: string;
-    imageWidth: number,
-    imageHeight: number
+    offsetX?: number;
+    offsetY?: number;
+    offsetAngle?: number;
+    imageUrl?: string;
+    imageWidth?: number,
+    imageHeight?: number,
+    rotation?: boolean;
   };
-  rotation?: boolean;
   line?: Polyline | null;
 }
