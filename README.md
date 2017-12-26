@@ -15,6 +15,10 @@ A google maps library to replay gps locations.
 
 [Codepen](https://codepen.io/manpreetsingh80/pen/aEpzjB)
 
+### Angular
+
+[Stackblitz](https://stackblitz.com/edit/travel-marker-angular-agm)
+
 ## Installation
 ```bash
   npm install travel-marker
@@ -86,7 +90,7 @@ marker.setInterval(20);
 
 ## Todo
 - [ ] Add listeners to marker
-- [ ] Add Examples
+- [x] Add Examples
 - [ ] Implement setOptions()
 - [ ] Custom events for play, pause, finished, arrived
 - [ ] Add custom overlay markers with rotation
