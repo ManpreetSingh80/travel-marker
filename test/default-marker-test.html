@@ -12,10 +12,36 @@
         margin: 0px;
         padding: 0px
       }
+
+      .controls {
+        position: absolute;
+        z-index: 999;
+        top: 10px;
+        right: 50px;
+      }
+
+      button {
+        font-size: 14px;
+        background: blue;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 10px;
+      }
+
+      button:hover, button:focus {
+        background: red;
+      }
     </style>
 
     <div id="map-canvas"></div>
-
+    <div class="controls">
+      <button onclick="play()">Play</button>
+      <button onclick="pause()">Pause</button>
+      <button onclick="reset()">Reset</button>
+      <button onclick="next()">Next</button>
+      <button onclick="prev()">Previous</button>
+    </div>
     <script>
 
 var trips = {
@@ -195,11 +221,6 @@ trips.gmap = (function (window, document) {
     return Math.atan2(Math.sin(dl) * Math.cos(f2) , Math.cos(f1) * Math.sin(f2) - Math.sin(f1) * Math.cos(f2) * Math.cos(dl));
   }
 
-  function setRotation() {
-
-  };
-
-
   function updateMarker() {
     if (index === path.length - 1) {
       return 'no more points to show';
@@ -327,7 +348,7 @@ console.log(TravelMarker);
   console.log(marker, marker.echo('test'));*/
   // animateIcon();
 }
-
+var marker;
 function initRoute() {
   var route = line.getPath().b;
   console.log('route',route);
@@ -341,11 +362,24 @@ function initRoute() {
   // })
   console.log(TravelMarker);
   console.log(map);
-  var marker = new TravelMarker({
+  marker = new TravelMarker({
     map: map,
     speed: 15,
     interval: 10,
-    // markerType: 'overlay'
+    markerOptions: {
+      title: 'Travel Marker',
+      animation: google.maps.Animation.DROP,
+      icon: {
+        url: 'http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons-256/glossy-black-comment-bubbles-icons-transport-travel/038354-glossy-black-comment-bubble-icon-transport-travel-transportation-truck1.png',
+        // This marker is 20 pixels wide by 32 pixels high.
+        // size: new google.maps.Size(256, 256),
+        scaledSize: new google.maps.Size(128, 128),
+        // The origin for this image is (0, 0).
+        origin: new google.maps.Point(0, 0),
+        // The anchor for this image is the base of the flagpole at (0, 32).
+        anchor: new google.maps.Point(53, 110)
+      }
+    }
   });
   console.log(marker);
   marker.addLocation(route);
@@ -365,6 +399,28 @@ function initRoute() {
   //   console.log(j[i].src);
   // }
   // setTimeout(trips.gmap.play, 2000);
+}
+
+// play animation
+function play() {
+  marker.play();
+}
+
+// pause animation
+function pause() {
+  marker.pause();
+}
+
+function reset() {
+  marker.reset();
+}
+
+function next() {
+  marker.next();
+}
+
+function prev() {
+  marker.prev();
 }
 
 function calcRoute() {

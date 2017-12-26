@@ -196,19 +196,20 @@ export class CustomOverlayMarker  {
   reset() {
     this.playing = false;
     this.index = 0;
+    this.delta = null;
     this.marker.setPosition(this.path[this.index]);
   }
 
   next() {
     this.index++;
     this.delta = null;
-    this.updateMarker();
+    this.marker.setPosition(this.path[this.index]);
   }
 
   prev() {
     this.index--;
     this.delta = null;
-    this.updateMarker();
+    this.marker.setPosition(this.path[this.index]);
   }
 
   private updateMarker() {
