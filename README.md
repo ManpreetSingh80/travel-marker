@@ -88,9 +88,26 @@ marker.setSpeed(50);
 marker.setInterval(20);
 ```
 
+### Listen Events
+```typescript
+/*  EventType = 'play' | 'paused' | 'finished' | 'reset' | 'checkpoint'; 
+    // checkpoint - when marker arrives on a location present in locationArray
+    TravelData = {
+      location: LatLng; // marker current location
+      playing: boolean; // is animation playing?
+      index: number;  // index in locationArray
+      status: 'reset' | 'playing' | 'paused' | 'finished';  // animation status
+    }
+*/
+marker.event.onEvent((event: EventType, data: TravelData) => {
+  // .... do something
+})
+```
+
 ## Todo
-- [ ] Add listeners to marker
+- [ ] Add listeners to marker like click,hover etc.
 - [x] Add Examples
 - [ ] Implement setOptions()
-- [ ] Custom events for play, pause, finished, arrived
+- [ ] Add jsdoc
+- [x] Custom events for play, pause, finished, checkpoint
 - [ ] Add custom overlay markers with rotation
