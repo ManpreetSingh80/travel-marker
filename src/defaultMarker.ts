@@ -1,5 +1,6 @@
 import { Marker, MarkerOptions, MarkerLabel, GoogleMap, LatLng, LatLngLiteral, MapsEventListener } from './google-map-types';
 import { latlngDistance, getAngle } from './utils';
+import { TravelEvents, TravelData, EventType } from './events';
 
 declare var google: any;
 
@@ -18,6 +19,7 @@ export class DefaultMarker implements Marker {
   private speed = 0;
   private interval = 0;
   private markerOptions = {};
+  private eventEmitter: TravelEvents = null;
 
   constructor(markerOptions: MarkerOptions, speed: number, interval: number, path: any[]) {
     console.log(markerOptions, speed, interval, path);
@@ -28,6 +30,10 @@ export class DefaultMarker implements Marker {
     this.interval = interval;
     this.path = path;
     return this;
+  }
+
+  setEventEmitter(eventEmitter: TravelEvents) {
+    this.eventEmitter = eventEmitter;
   }
 
   getAnimation() {
@@ -130,11 +136,23 @@ export class DefaultMarker implements Marker {
   // animation
   play() {
     this.playing = true;
+    this.eventEmitter.emitEvent('play', {
+      location: this.marker.getPosition(),
+      status: 'playing',
+      playing: this.playing,
+      index: this.index
+    });
     this.animate();
   }
 
   pause() {
     this.playing = false;
+    this.eventEmitter.emitEvent('paused', {
+      location: this.marker.getPosition(),
+      status: 'paused',
+      playing: this.playing,
+      index: this.index
+    });
     this.animate();
   }
 
@@ -143,6 +161,12 @@ export class DefaultMarker implements Marker {
     this.index = 0;
     this.delta = null;
     this.marker.setPosition(this.path[this.index]);
+    this.eventEmitter.emitEvent('reset', {
+      location: this.marker.getPosition(),
+      status: 'reset',
+      playing: this.playing,
+      index: this.index
+    });
   }
 
   next() {
@@ -160,6 +184,12 @@ export class DefaultMarker implements Marker {
 
   private updateMarker() {
     if (this.index >= this.path.length - 1) {
+      this.eventEmitter.emitEvent('finished', {
+        location: this.marker.getPosition(),
+        status: 'finished',
+        playing: this.playing,
+        index: this.index
+      });
       return 'no more points to show';
     }
 
@@ -170,6 +200,13 @@ export class DefaultMarker implements Marker {
     if (!this.marker) {
       setTimeout(() => this.updateMarker(), 100);
     }
+
+    this.eventEmitter.emitEvent('checkpoint', {
+      location: this.marker.getPosition(),
+      status: 'playing',
+      playing: this.playing,
+      index: this.index
+    });
 
     const curr = this.marker.getPosition();
     const next = this.path[this.index + 1];

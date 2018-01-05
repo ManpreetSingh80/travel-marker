@@ -364,7 +364,7 @@ function initRoute() {
   console.log(map);
   marker = new TravelMarker({
     map: map,
-    speed: 15,
+    speed: 1500,
     interval: 10,
     markerOptions: {
       title: 'Travel Marker',
@@ -383,6 +383,9 @@ function initRoute() {
   });
   console.log(marker);
   marker.addLocation(route);
+  marker.event.onEvent((event, data) => {
+    console.log('Event', event, data);
+  });
   // marker.addListener('click', function() {alert('clicked')});
   // setTimeout(() => marker.play(), 2000);
   // trips.gmap.init({

@@ -5,6 +5,7 @@ import { Marker, MarkerOptions, google } from './google-map-types';
 import { DefaultMarker } from './defaultMarker';
 import { CustomOverlayMarker } from './customOverlayMarker';
 import { MapsEventListener } from './google-map-types';
+import { TravelEvents } from './events';
 
 export class TravelMarker {
 
@@ -44,6 +45,8 @@ export class TravelMarker {
   private deltaLast = null;
   private angle = 0;
 
+  public event: TravelEvents = null;
+
   constructor(options: TravelMarkerOptions) {
     if (options.map === null) {
       console.log('map cannot be null');
@@ -67,6 +70,14 @@ export class TravelMarker {
       typeof options.line === 'object';
   }
 
+  private setListener() {
+    this.event = new TravelEvents(this.marker);
+    this.event.onEvent((event, data) => {
+      // console.log('Event', event, data);
+      this.playing = data.playing;
+    });
+  }
+
   addLocation(locationArray: any[] = []) {
     locationArray.forEach(location => {
       if (location.lat && location.lng) {
@@ -83,6 +94,7 @@ export class TravelMarker {
       } else {
 
       }
+      this.setListener();
     } else if (this.marker) {
       this.marker.addLocation(locationArray);
     } else {

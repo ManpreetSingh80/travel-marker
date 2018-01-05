@@ -1,5 +1,6 @@
 import { Marker, MarkerOptions, OverlayView } from './google-map-types';
 import { latlngDistance, getAngle } from './utils';
+import { TravelEvents } from './events';
 
 declare var google: any;
 
@@ -30,6 +31,7 @@ export class CustomOverlayMarker  {
   private deltaLast = null;
   private speed = 0;
   private interval = 0;
+  private eventEmitter: TravelEvents = null;
 
   constructor(map: any, overlayOptions: any, speed: number, interval: number, path: any[]) {
     this.map = map;
@@ -142,7 +144,7 @@ export class CustomOverlayMarker  {
     };
     marker.addListener = function(eventName: string, handler: Function) {
       const a = (e) => console.log(e);
-      google.maps.event.addListener(marker, "click", a);
+      google.maps.event.addListener(marker, 'click', a);
     };
     // The onRemove() method will be called automatically from the API if
     // we ever set the overlay's map property to 'null'.
@@ -160,6 +162,10 @@ export class CustomOverlayMarker  {
   google.maps.event.addListener(this.marker, 'click', function(event) {alert('map');
 });
     this.marker.addListener('click', function() {});
+  }
+
+  setEventEmitter(eventEmitter: TravelEvents) {
+    this.eventEmitter = eventEmitter;
   }
 
   addLocation(locationArray: any[] = []) {
