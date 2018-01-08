@@ -169,7 +169,11 @@ export class TravelMarker {
   }
 
   addListener(eventName: string, handler: Function): any {
-    this.marker.addListener(eventName, handler);
+    if (!this.marker) {
+      setTimeout(() => this.addListener(eventName, handler), 300);
+    } else {
+      return this.marker.addListener(eventName, handler);
+    }
   }
 
 }
