@@ -1,4 +1,4 @@
-import { Marker, MarkerOptions, OverlayView, LatLng } from './google-map-types';
+import { Marker, MarkerOptions, OverlayView, LatLng, GoogleMap } from './google-map-types';
 import { latlngDistance, getAngle } from './utils';
 import { TravelEvents, TravelData, EventType } from './events';
 
@@ -42,6 +42,7 @@ export class CustomOverlayMarker  {
     this.speedMultiplier = speedMultiplier;
     this.path = path;
     const position = path[0];
+    this.angle = path.length > 1 ? getAngle(path[0], path[1]) * 180 / Math.PI : 0;
 
     // this.div_ = null;
     const marker = new google.maps.OverlayView();
@@ -51,27 +52,27 @@ export class CustomOverlayMarker  {
     marker.angle = this.angle;
     marker.position = position;
 
-  marker.onAdd = function() {
-    const div = document.createElement('DIV');
-    div.style.borderStyle = 'none';
-    div.style.borderWidth = '0px';
-    div.style.position = 'absolute';
+    marker.onAdd = function() {
+      const div = document.createElement('DIV');
+      div.style.borderStyle = 'none';
+      div.style.borderWidth = '0px';
+      div.style.position = 'absolute';
 
-    // Create the img element and attach it to the div.
-    const img = document.createElement('img');
-    img.src = marker.overlayOptions.imageUrl;
-    img.style.width = '100%';
-    img.style.height = '100%';
-    img.style.position = 'absolute';
-    div.appendChild(img);
+      // Create the img element and attach it to the div.
+      const img = document.createElement('img');
+      img.src = marker.overlayOptions.imageUrl;
+      img.style.width = '100%';
+      img.style.height = '100%';
+      img.style.position = 'absolute';
+      div.appendChild(img);
 
-    marker.div_ = div;
+      marker.div_ = div;
 
-    // Add the element to the "overlayLayer" pane.
-    const panes = marker.getPanes();
-    panes.overlayMouseTarget.appendChild(div);
+      // Add the element to the "overlayLayer" pane.
+      const panes = marker.getPanes();
+      panes.overlayMouseTarget.appendChild(div);
 
-  };
+    };
 
     marker.setPosition = function(pos) {
       if (typeof pos.lat === 'function' || typeof pos.lng === 'function') {
@@ -88,6 +89,7 @@ export class CustomOverlayMarker  {
 
     marker.setAngle = function(angle) {
       marker.angle = angle;
+      marker.draw();
     };
 
     marker.draw = function() {
@@ -151,12 +153,20 @@ export class CustomOverlayMarker  {
     return this;
   }
 
+  private equalLatLng(loc1: LatLng, loc2: LatLng): boolean {
+    return loc1.lat() === loc2.lat() && loc1.lng() === loc2.lng();
+  }
+
   addListener(eventName: string, handler: Function): any {
     this.marker.addListener(eventName, handler);
   }
 
   getPosition(): LatLng {
     return this.marker.getPosition();
+  }
+
+  setMap(map: GoogleMap) {
+    this.marker.setMap(map);
   }
 
   setEventEmitter(eventEmitter: TravelEvents) {
@@ -224,15 +234,45 @@ export class CustomOverlayMarker  {
   }
 
   next() {
+    if (this.index === this.path.length - 1) {  // last index
+      return;
+    }
+
     this.index++;
     this.delta = null;
     this.marker.setPosition(this.path[this.index]);
+
+    if (this.index < (this.path.length - 2)) {
+
+      const currentLoc = this.path[this.index];
+      const nextLoc = this.path[this.index + 1];
+
+      if (this.equalLatLng(currentLoc, nextLoc)) {
+        return;
+      }
+
+      this.angle = getAngle(currentLoc, nextLoc) * 180 / Math.PI;
+      this.marker.setAngle(this.angle);
+    }
   }
 
   prev() {
+    if (!this.index) {  // first Index
+      return;
+    }
+
     this.index--;
     this.delta = null;
     this.marker.setPosition(this.path[this.index]);
+    if (this.index < (this.path.length - 2)) {
+      const currentLoc = this.path[this.index];
+      const nextLoc = this.path[this.index + 1];
+      if (this.equalLatLng(currentLoc, nextLoc)) {
+        return;
+      }
+      this.angle = getAngle(this.path[this.index], this.path[this.index + 1]) * 180 / Math.PI;
+      this.marker.setAngle(this.angle);
+    }
   }
 
   private updateMarker() {
@@ -264,24 +304,24 @@ export class CustomOverlayMarker  {
     const curr = this.marker.getPosition();
     const next = this.path[this.index + 1];
     const distance = latlngDistance({lat: curr.lat(), lng: curr.lng()}, {lat: next.lat(), lng: next.lng()});
-    console.log('update car', next.lat(), next.lng(), distance, this.index);
-    this.angle = getAngle(curr, next) * 180 / Math.PI;
-    console.log('angle', this.angle);
-    this.marker.setAngle(this.angle);
+    // console.log('update car', next.lat(), next.lng(), distance, this.index);
     this.numDelta = Math.floor((distance * (1000 / this.interval)) / this.speed);
-    console.log(this.numDelta);
+    // console.log(this.numDelta);
     this.index++;
     if (!this.numDelta) {
-      console.log('skip to next marker');
+      // console.log('skip to next marker');
       this.updateMarker();
     } else {
+      this.angle = getAngle(curr, next) * 180 / Math.PI;
+      // console.log('angle', this.angle);
+      this.marker.setAngle(this.angle);
       const deltaLat = (next.lat() - curr.lat()) / this.numDelta;
       const deltaLng = (next.lng() - curr.lng()) / this.numDelta;
       this.delta = {lat: deltaLat, lng: deltaLng };
       this.deltaIndex = 0;
       this.deltaCurr = { lat: curr.lat(), lng: curr.lng() };
       this.deltaLast = { lat: next.lat(), lng: next.lng() };
-      console.log(this.delta, this.deltaCurr, this.deltaLast, this.deltaIndex);
+      // console.log(this.delta, this.deltaCurr, this.deltaLast, this.deltaIndex);
       setTimeout(() => this.animate(), this.interval * Math.ceil(1 / this.speedMultiplier));
     }
   }

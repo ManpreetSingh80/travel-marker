@@ -1,7 +1,7 @@
 // declare var google: any;
 
 import { TravelMarkerOptions } from './travelMarkerOptions';
-import { Marker, MarkerOptions, google, LatLng } from './google-map-types';
+import { Marker, MarkerOptions, google, LatLng, GoogleMap } from './google-map-types';
 import { DefaultMarker } from './defaultMarker';
 import { CustomOverlayMarker } from './customOverlayMarker';
 import { MapsEventListener } from './google-map-types';
@@ -166,6 +166,10 @@ export class TravelMarker {
     } else {
       return false;
     }
+  }
+
+  setMap(map: GoogleMap) {
+    this.marker.setMap(map);
   }
 
   addListener(eventName: string, handler: Function): any {

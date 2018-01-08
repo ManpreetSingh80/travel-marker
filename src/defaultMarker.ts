@@ -180,12 +180,20 @@ export class DefaultMarker implements Marker {
   }
 
   next() {
+    if (this.index === this.path.length - 1) {  // last index
+      return;
+    }
+
     this.index++;
     this.delta = null;
     this.marker.setPosition(this.path[this.index]);
   }
 
   prev() {
+    if (!this.index) {  // first Index
+      return;
+    }
+
     this.index--;
     this.delta = null;
     this.marker.setPosition(this.path[this.index]);
