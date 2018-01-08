@@ -112,7 +112,11 @@ export class DefaultMarker implements Marker {
   }
 
   addListener(eventName: string, handler: Function): MapsEventListener {
-    return this.marker.addListener(eventName, handler);
+    if (!this.marker) {
+      setTimeout(() => this.addListener(eventName, handler), 300);
+    } else {
+      return this.marker.addListener(eventName, handler);
+    }
   }
 
   setSpeed(speed = this.speed) {
@@ -225,7 +229,7 @@ export class DefaultMarker implements Marker {
     this.index++;
     if (!this.numDelta) {
       // console.log('skip to next marker');
-      this.updateMarker();
+      setTimeout(() => this.updateMarker(), this.interval * Math.ceil(1 / this.speedMultiplier));
     } else {
       const deltaLat = (next.lat() - curr.lat()) / this.numDelta;
       const deltaLng = (next.lng() - curr.lng()) / this.numDelta;
@@ -234,7 +238,7 @@ export class DefaultMarker implements Marker {
       this.deltaCurr = { lat: curr.lat(), lng: curr.lng() };
       this.deltaLast = { lat: next.lat(), lng: next.lng() };
       // console.log(this.delta, this.deltaCurr, this.deltaLast, this.deltaIndex);
-      setTimeout(() => this.animate(), this.interval);
+      setTimeout(() => this.animate(), this.interval * Math.ceil(1 / this.speedMultiplier));
     }
   }
 
@@ -248,19 +252,22 @@ export class DefaultMarker implements Marker {
       // console.log('paused');
       return 'paused';
     }
-    this.deltaCurr.lat += this.delta.lat;
-    this.deltaCurr.lng += this.delta.lng;
+    this.deltaCurr.lat += this.delta.lat * Math.ceil(this.speedMultiplier);
+    this.deltaCurr.lng += this.delta.lng * Math.ceil(this.speedMultiplier);
     const newPos = { lat: this.deltaCurr.lat, lng: this.deltaCurr.lng };
     // console.log('new pos', newPos, this.deltaIndex);
     this.marker.setPosition(newPos);
     const nextIndex = this.deltaIndex + Math.ceil(this.speedMultiplier);
+    // console.log('nextIndex', nextIndex,  Math.ceil(1 / this.speedMultiplier));
     if (nextIndex < this.numDelta) {
       this.deltaIndex = nextIndex;
       setTimeout(() => this.animate(), this.interval * Math.ceil(1 / this.speedMultiplier));
     } else {
-      // console.log('last', this.deltaLast);
-      this.marker.setPosition(this.deltaLast);
-      setTimeout(() => this.updateMarker(), this.interval * Math.ceil(1 / this.speedMultiplier));
+      console.log('last', this.deltaLast);
+      setTimeout(() => {
+        this.marker.setPosition(this.deltaLast);
+        this.updateMarker();
+      }, this.interval * Math.ceil(1 / this.speedMultiplier));
     }
   }
 

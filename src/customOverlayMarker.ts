@@ -282,24 +282,24 @@ export class CustomOverlayMarker  {
       this.deltaCurr = { lat: curr.lat(), lng: curr.lng() };
       this.deltaLast = { lat: next.lat(), lng: next.lng() };
       console.log(this.delta, this.deltaCurr, this.deltaLast, this.deltaIndex);
-      setTimeout(() => this.animate(), this.interval);
+      setTimeout(() => this.animate(), this.interval * Math.ceil(1 / this.speedMultiplier));
     }
   }
 
   private animate() {
     if (!this.deltaCurr || !this.delta || !this.deltaLast) {
-      console.log('update marker');
+      // console.log('update marker');
       this.updateMarker();
       return;
     }
     if (!this.playing) {
-      console.log('paused');
+      // console.log('paused');
       return 'paused';
     }
-    this.deltaCurr.lat += this.delta.lat;
-    this.deltaCurr.lng += this.delta.lng;
+    this.deltaCurr.lat += this.delta.lat * Math.ceil(this.speedMultiplier);
+    this.deltaCurr.lng += this.delta.lng * Math.ceil(this.speedMultiplier);
     const newPos = { lat: this.deltaCurr.lat, lng: this.deltaCurr.lng };
-    console.log('new pos', newPos, this.deltaIndex);
+    // console.log('new pos', newPos, this.deltaIndex);
     this.marker.setPosition(newPos);
     const nextIndex = this.deltaIndex + Math.ceil(this.speedMultiplier);
     if (nextIndex < this.numDelta) {
@@ -307,8 +307,10 @@ export class CustomOverlayMarker  {
       setTimeout(() => this.animate(), this.interval * Math.ceil(1 / this.speedMultiplier));
     } else {
       // console.log('last', this.deltaLast);
-      this.marker.setPosition(this.deltaLast);
-      setTimeout(() => this.updateMarker(), this.interval * Math.ceil(1 / this.speedMultiplier));
+      setTimeout(() => {
+        this.marker.setPosition(this.deltaLast);
+        this.updateMarker();
+      }, this.interval * Math.ceil(1 / this.speedMultiplier));
     }
   }
 }
