@@ -1,6 +1,6 @@
-import { Marker, MarkerOptions, OverlayView } from './google-map-types';
+import { Marker, MarkerOptions, OverlayView, LatLng } from './google-map-types';
 import { latlngDistance, getAngle } from './utils';
-import { TravelEvents } from './events';
+import { TravelEvents, TravelData, EventType } from './events';
 
 declare var google: any;
 
@@ -31,13 +31,15 @@ export class CustomOverlayMarker  {
   private deltaLast = null;
   private speed = 0;
   private interval = 0;
+  private speedMultiplier = 1;
   private eventEmitter: TravelEvents = null;
 
-  constructor(map: any, overlayOptions: any, speed: number, interval: number, path: any[]) {
+  constructor(map: any, overlayOptions: any, speed: number, interval: number, speedMultiplier: number, path: any[]) {
     this.map = map;
     this.overlayOptions = overlayOptions;
     this.speed = speed;
     this.interval = interval;
+    this.speedMultiplier = speedMultiplier;
     this.path = path;
     const position = path[0];
 
@@ -48,7 +50,6 @@ export class CustomOverlayMarker  {
     marker.overlayOptions = this.overlayOptions;
     marker.angle = this.angle;
     marker.position = position;
-    marker.that = this;
 
   marker.onAdd = function() {
     const div = document.createElement('DIV');
@@ -63,29 +64,21 @@ export class CustomOverlayMarker  {
     img.style.height = '100%';
     img.style.position = 'absolute';
     div.appendChild(img);
-    const me = marker.that;
-
-
 
     marker.div_ = div;
 
-    google.maps.event.addDomListener(marker.div_, 'click', function(event) {
-      alert('overlay');
-      // google.maps.event.trigger(me, "click");
-    });
-    google.maps.event.addDomListener(img, 'click', function(event) {
-      alert('overlay');
-      // google.maps.event.trigger(me, "click");
-    });
-
     // Add the element to the "overlayLayer" pane.
     const panes = marker.getPanes();
-    panes.overlayLayer.appendChild(div);
+    panes.overlayMouseTarget.appendChild(div);
 
   };
 
     marker.setPosition = function(pos) {
-      marker.position = new google.maps.LatLng(pos.lat, pos.lng);
+      if (typeof pos.lat === 'function' || typeof pos.lng === 'function') {
+        marker.position = pos;
+      } else {
+        marker.position = new google.maps.LatLng(pos.lat, pos.lng);
+      }
       marker.draw();
     };
 
@@ -123,10 +116,9 @@ export class CustomOverlayMarker  {
         // div.style.zIndex = '9999999';
         // marker.div_ = div;
       }
-      google.maps.event.addDomListener(marker.div_, 'click', function(event) {
-        alert('overlay');
-        // google.maps.event.trigger(me, "click");
-      });
+      // google.maps.event.addDomListener(marker.div_, 'click', function(event) {
+      //   console.log('overlay');
+      // });
       /*
       // Retrieve the south-west and north-east coordinates of this overlay
       // in LatLngs and convert them to pixel coordinates.
@@ -143,8 +135,11 @@ export class CustomOverlayMarker  {
       */
     };
     marker.addListener = function(eventName: string, handler: Function) {
-      const a = (e) => console.log(e);
-      google.maps.event.addListener(marker, 'click', a);
+      if (!marker.div_) {
+        setTimeout(() => marker.addListener(eventName, handler), 300);
+      } else {
+        google.maps.event.addDomListener(marker.div_, eventName, handler);
+      }
     };
     // The onRemove() method will be called automatically from the API if
     // we ever set the overlay's map property to 'null'.
@@ -156,12 +151,12 @@ export class CustomOverlayMarker  {
     return this;
   }
 
-  addListener(eventName: string, handler: Function) {
-    google.maps.event.addListener(this.map, 'click', function(event) {alert('map');
-  });
-  google.maps.event.addListener(this.marker, 'click', function(event) {alert('map');
-});
-    this.marker.addListener('click', function() {});
+  addListener(eventName: string, handler: Function): any {
+    this.marker.addListener(eventName, handler);
+  }
+
+  getPosition(): LatLng {
+    return this.marker.getPosition();
   }
 
   setEventEmitter(eventEmitter: TravelEvents) {
@@ -184,6 +179,10 @@ export class CustomOverlayMarker  {
     this.interval = interval;
   }
 
+  setSpeedMultiplier(multiplier: number) {
+    this.speedMultiplier = multiplier;
+  }
+
   setOptions(overlayOptions: any = this.overlayOptions) {
     // this.marker.setOp
   }
@@ -191,11 +190,23 @@ export class CustomOverlayMarker  {
   // animation
   play() {
     this.playing = true;
+    this.eventEmitter.emitEvent('play', {
+      location: this.marker.getPosition(),
+      status: 'playing',
+      playing: this.playing,
+      index: this.index
+    });
     this.animate();
   }
 
   pause() {
     this.playing = false;
+    this.eventEmitter.emitEvent('paused', {
+      location: this.marker.getPosition(),
+      status: 'paused',
+      playing: this.playing,
+      index: this.index
+    });
     this.animate();
   }
 
@@ -204,6 +215,12 @@ export class CustomOverlayMarker  {
     this.index = 0;
     this.delta = null;
     this.marker.setPosition(this.path[this.index]);
+    this.eventEmitter.emitEvent('reset', {
+      location: this.marker.getPosition(),
+      status: 'reset',
+      playing: this.playing,
+      index: this.index
+    });
   }
 
   next() {
@@ -220,6 +237,12 @@ export class CustomOverlayMarker  {
 
   private updateMarker() {
     if (this.index === this.path.length - 1) {
+      this.eventEmitter.emitEvent('finished', {
+        location: this.marker.getPosition(),
+        status: 'finished',
+        playing: this.playing,
+        index: this.index
+      });
       return 'no more points to show';
     }
 
@@ -230,6 +253,13 @@ export class CustomOverlayMarker  {
     if (!this.marker) {
       setTimeout(() => this.updateMarker(), 100);
     }
+
+    this.eventEmitter.emitEvent('checkpoint', {
+      location: this.marker.getPosition(),
+      status: 'playing',
+      playing: this.playing,
+      index: this.index
+    });
 
     const curr = this.marker.getPosition();
     const next = this.path[this.index + 1];
@@ -271,13 +301,14 @@ export class CustomOverlayMarker  {
     const newPos = { lat: this.deltaCurr.lat, lng: this.deltaCurr.lng };
     console.log('new pos', newPos, this.deltaIndex);
     this.marker.setPosition(newPos);
-    if (this.deltaIndex !== this.numDelta) {
-      this.deltaIndex++;
-      setTimeout(() => this.animate(), this.interval);
+    const nextIndex = this.deltaIndex + Math.ceil(this.speedMultiplier);
+    if (nextIndex < this.numDelta) {
+      this.deltaIndex = nextIndex;
+      setTimeout(() => this.animate(), this.interval * Math.ceil(1 / this.speedMultiplier));
     } else {
-      console.log('last', this.deltaLast);
+      // console.log('last', this.deltaLast);
       this.marker.setPosition(this.deltaLast);
-      setTimeout(() => this.updateMarker(), this.interval);
+      setTimeout(() => this.updateMarker(), this.interval * Math.ceil(1 / this.speedMultiplier));
     }
   }
 }

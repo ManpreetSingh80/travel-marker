@@ -4,6 +4,7 @@ export interface TravelMarkerOptions {
   map: GoogleMap | null;
   speed?: number;
   interval?: number;
+  speedMultiplier?: number;
   markerType?: 'default' | 'symbol' | 'overlay';
   markerOptions?: MarkerOptions;
   overlayOptions?: {

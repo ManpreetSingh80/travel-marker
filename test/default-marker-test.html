@@ -41,6 +41,9 @@
       <button onclick="reset()">Reset</button>
       <button onclick="next()">Next</button>
       <button onclick="prev()">Previous</button>
+      <button onclick="fast()">Fast</button>
+      <span id="speed">Speed: 1x</span>
+      <button onclick="slow()">Slow</button>
     </div>
     <script>
 
@@ -349,6 +352,7 @@ console.log(TravelMarker);
   // animateIcon();
 }
 var marker;
+var speedMultiplier;
 function initRoute() {
   var route = line.getPath().b;
   console.log('route',route);
@@ -362,10 +366,13 @@ function initRoute() {
   // })
   console.log(TravelMarker);
   console.log(map);
+  speedMultiplier = 1;
   marker = new TravelMarker({
     map: map,
-    speed: 1500,
+    speed: 150,
     interval: 10,
+    speedMultiplier: speedMultiplier,
+    markerType: 'overlay',
     markerOptions: {
       title: 'Travel Marker',
       animation: google.maps.Animation.DROP,
@@ -383,9 +390,10 @@ function initRoute() {
   });
   console.log(marker);
   marker.addLocation(route);
-  marker.event.onEvent((event, data) => {
-    console.log('Event', event, data);
-  });
+  // marker.event.onEvent((event, data) => {
+  //   console.log('Event', event, data);
+  // });
+  marker.addListener('mouseover', () => console.log('click on marker'));
   // marker.addListener('click', function() {alert('clicked')});
   // setTimeout(() => marker.play(), 2000);
   // trips.gmap.init({
@@ -402,6 +410,20 @@ function initRoute() {
   //   console.log(j[i].src);
   // }
   // setTimeout(trips.gmap.play, 2000);
+}
+
+// fast forward
+function fast() {
+  speedMultiplier*=2;
+  document.getElementById('speed').innerHTML = 'Speed: ' + speedMultiplier + 'x';
+  marker.setSpeedMultiplier(speedMultiplier)
+}
+
+// slow motion
+function slow() {
+  speedMultiplier/=2;
+  document.getElementById('speed').innerHTML = 'Speed: ' + speedMultiplier + 'x';
+  marker.setSpeedMultiplier(speedMultiplier)
 }
 
 // play animation

@@ -18,16 +18,18 @@ export class DefaultMarker implements Marker {
   private angle = 0;
   private speed = 0;
   private interval = 0;
+  private speedMultiplier = 1;
   private markerOptions = {};
   private eventEmitter: TravelEvents = null;
 
-  constructor(markerOptions: MarkerOptions, speed: number, interval: number, path: any[]) {
+  constructor(markerOptions: MarkerOptions, speed: number, interval: number, speedMultiplier: number, path: any[]) {
     console.log(markerOptions, speed, interval, path);
     this.marker =  <Marker> new google.maps.Marker(markerOptions);
     console.log(this.marker);
     this.markerOptions = markerOptions;
     this.speed = speed;
     this.interval = interval;
+    this.speedMultiplier = speedMultiplier;
     this.path = path;
     return this;
   }
@@ -121,6 +123,10 @@ export class DefaultMarker implements Marker {
     this.interval = interval;
   }
 
+  setSpeedMultiplier(multiplier: number) {
+    this.speedMultiplier = multiplier;
+  }
+
   setOptions(markerOptions: any = this.markerOptions) {
     // this.marker.setOp
   }
@@ -211,14 +217,14 @@ export class DefaultMarker implements Marker {
     const curr = this.marker.getPosition();
     const next = this.path[this.index + 1];
     const distance = latlngDistance({lat: curr.lat(), lng: curr.lng()}, {lat: next.lat(), lng: next.lng()});
-    console.log('update car', next.lat(), next.lng(), distance, this.index);
+    // console.log('update car', next.lat(), next.lng(), distance, this.index);
     this.angle = getAngle(curr, next) * 180 / Math.PI;
-    console.log('angle', this.angle);
+    // console.log('angle', this.angle);
     this.numDelta = Math.floor((distance * (1000 / this.interval)) / this.speed);
-    console.log(this.numDelta);
+    // console.log(this.numDelta);
     this.index++;
     if (!this.numDelta) {
-      console.log('skip to next marker');
+      // console.log('skip to next marker');
       this.updateMarker();
     } else {
       const deltaLat = (next.lat() - curr.lat()) / this.numDelta;
@@ -227,33 +233,34 @@ export class DefaultMarker implements Marker {
       this.deltaIndex = 0;
       this.deltaCurr = { lat: curr.lat(), lng: curr.lng() };
       this.deltaLast = { lat: next.lat(), lng: next.lng() };
-      console.log(this.delta, this.deltaCurr, this.deltaLast, this.deltaIndex);
+      // console.log(this.delta, this.deltaCurr, this.deltaLast, this.deltaIndex);
       setTimeout(() => this.animate(), this.interval);
     }
   }
 
   private animate() {
     if (!this.deltaCurr || !this.delta || !this.deltaLast) {
-      console.log('update marker');
+      // console.log('update marker');
       this.updateMarker();
       return;
     }
     if (!this.playing) {
-      console.log('paused');
+      // console.log('paused');
       return 'paused';
     }
     this.deltaCurr.lat += this.delta.lat;
     this.deltaCurr.lng += this.delta.lng;
     const newPos = { lat: this.deltaCurr.lat, lng: this.deltaCurr.lng };
-    console.log('new pos', newPos, this.deltaIndex);
+    // console.log('new pos', newPos, this.deltaIndex);
     this.marker.setPosition(newPos);
-    if (this.deltaIndex !== this.numDelta) {
-      this.deltaIndex++;
-      setTimeout(() => this.animate(), this.interval);
+    const nextIndex = this.deltaIndex + Math.ceil(this.speedMultiplier);
+    if (nextIndex < this.numDelta) {
+      this.deltaIndex = nextIndex;
+      setTimeout(() => this.animate(), this.interval * Math.ceil(1 / this.speedMultiplier));
     } else {
-      console.log('last', this.deltaLast);
+      // console.log('last', this.deltaLast);
       this.marker.setPosition(this.deltaLast);
-      setTimeout(() => this.updateMarker(), this.interval);
+      setTimeout(() => this.updateMarker(), this.interval * Math.ceil(1 / this.speedMultiplier));
     }
   }
 

@@ -88,6 +88,19 @@ marker.setSpeed(50);
 marker.setInterval(20);
 ```
 
+### Set Animation multiplier to fast-forward/slow replay
+```typescript
+marker.setSpeedMultiplier(2); // for 2x fast-forward
+marker.setSpeedMultiplier(0.5); // for slow replay
+```
+
+### Add Listener to marker like click,mouseover etc.
+```typescript
+marker.addListener('click', function() {
+  //  ...do something like show infobox
+});
+```
+
 ### Listen Events
 ```typescript
 /*  EventType = 'play' | 'paused' | 'finished' | 'reset' | 'checkpoint'; 
@@ -105,9 +118,9 @@ marker.event.onEvent((event: EventType, data: TravelData) => {
 ```
 
 ## Todo
-- [ ] Add listeners to marker like click,hover etc.
+- [x] Add listeners to marker like click,hover etc.
 - [x] Add Examples
-- [ ] Implement setOptions()
+- [ ] Implement setMarkerOptions()
 - [ ] Add jsdoc
 - [x] Custom events for play, pause, finished, checkpoint
 - [ ] Add custom overlay markers with rotation

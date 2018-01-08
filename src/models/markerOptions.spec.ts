@@ -11,6 +11,7 @@ export const defaultMarkerOptions: TravelMarkerOptions =  {
   map: google.map,
   speed: 10,
   interval: 300,
+  speedMultiplier: 1,
   markerType: 'default',
   markerOptions: {
     position: { lat: 0, lng: 0 }

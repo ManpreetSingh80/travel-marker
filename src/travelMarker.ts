@@ -1,7 +1,7 @@
 // declare var google: any;
 
 import { TravelMarkerOptions } from './travelMarkerOptions';
-import { Marker, MarkerOptions, google } from './google-map-types';
+import { Marker, MarkerOptions, google, LatLng } from './google-map-types';
 import { DefaultMarker } from './defaultMarker';
 import { CustomOverlayMarker } from './customOverlayMarker';
 import { MapsEventListener } from './google-map-types';
@@ -13,6 +13,7 @@ export class TravelMarker {
     map: null,
     speed: 35,
     interval: 20,
+    speedMultiplier: 1,
     markerType: 'default',
     markerOptions: {
       position: { lat: 0, lng: 0 }
@@ -78,6 +79,14 @@ export class TravelMarker {
     });
   }
 
+  getOptions(): TravelMarkerOptions {
+    return JSON.parse(JSON.stringify(this.options));
+  }
+
+  getPosition(): LatLng | null {
+    return this.marker ? this.marker.getPosition() : null;
+  }
+
   addLocation(locationArray: any[] = []) {
     locationArray.forEach(location => {
       if (location.lat && location.lng) {
@@ -87,10 +96,10 @@ export class TravelMarker {
     if (!this.marker && this.path.length) {
       if (this.options.markerType === 'default') {
         const markerOptions = Object.assign(this.options.markerOptions, { position: { lat: this.path[0].lat(), lng: this.path[0].lng() } });
-        this.marker = new DefaultMarker(markerOptions, this.options.speed, this.options.interval, this.path);
+        this.marker = new DefaultMarker(markerOptions, this.options.speed, this.options.interval, this.options.speedMultiplier, this.path);
       } else if (this.options.markerType === 'overlay') {
         this.marker = new CustomOverlayMarker(this.options.map, this.options.overlayOptions,
-           this.options.speed, this.options.interval, this.path);
+           this.options.speed, this.options.interval, this.options.speedMultiplier, this.path);
       } else {
 
       }
@@ -128,6 +137,11 @@ export class TravelMarker {
   setInterval(interval: number = this.options.interval) {
     this.options.interval = interval;
     this.marker.setInterval(interval);
+  }
+
+  setSpeedMultiplier(multiplier: number) {
+    this.options.speedMultiplier = multiplier;
+    this.marker.setSpeedMultiplier(multiplier);
   }
 
   setSpeed(speed: number = this.options.speed) {
