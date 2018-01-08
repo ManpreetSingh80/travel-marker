@@ -47,6 +47,26 @@ For browser
   var marker = new TravelMarker(options);
 ```
 
+### Creating an overlay marker
+
+```typescript
+  // options
+  var options = {
+    map: map,  // map object
+    speed: 15,  // default 10 , animation speed
+    interval: 50, // default 10, marker refresh time
+    overlayOptions: {
+      offsetX: 0, // default: 0, x-offset for overlay
+      offsetY: 0, // default: 0, y-offset for overlay
+      offsetAngle: 0, // default: 0, rotation-offset for overlay
+      imageUrl: 'https://i.stack.imgur.com/lDrin.png', // image used for overlay
+      imageWidth: 36, // image width of overlay
+      imageHeight: 58, // image height of overlay
+    }
+  };
+  var marker = new TravelMarker(options);
+```
+
 ### Add locations
 ```typescript
   var locationArray = [new google.maps.Latlng(74,23), new google.maps.LatLng(74.02,23.02), new google.maps.LatLng(74.04, 23.04)];
@@ -114,7 +134,7 @@ marker.addListener('click', function() {
 */
 marker.event.onEvent((event: EventType, data: TravelData) => {
   // .... do something
-})
+});
 ```
 
 ## Todo
@@ -123,4 +143,4 @@ marker.event.onEvent((event: EventType, data: TravelData) => {
 - [ ] Implement setMarkerOptions()
 - [ ] Add jsdoc
 - [x] Custom events for play, pause, finished, checkpoint
-- [ ] Add custom overlay markers with rotation
+- [x] Add custom overlay markers with rotation
