@@ -62,6 +62,12 @@ export interface MarkerOptions {
   zIndex?: number;
   clickable?: boolean;
   animation?: any;
+  anchorPoint?: Point;
+  crossOnDrag?: boolean;
+  cursor?: string;
+  optimized?: boolean;
+  place?: any;
+  shpae?: any;
 }
 
 export interface MarkerLabel {
