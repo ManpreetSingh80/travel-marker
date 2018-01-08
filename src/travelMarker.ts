@@ -25,7 +25,6 @@ export class TravelMarker {
       imageUrl: 'https://i.stack.imgur.com/lDrin.png',
       imageWidth: 36,
       imageHeight: 58,
-      rotation: false
     },
     line: null
   };

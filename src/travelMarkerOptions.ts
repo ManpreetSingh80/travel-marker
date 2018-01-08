@@ -13,8 +13,7 @@ export interface TravelMarkerOptions {
     offsetAngle?: number;
     imageUrl?: string;
     imageWidth?: number,
-    imageHeight?: number,
-    rotation?: boolean;
+    imageHeight?: number
   };
   line?: Polyline | null;
 }

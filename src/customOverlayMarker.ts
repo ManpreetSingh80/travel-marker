@@ -13,8 +13,7 @@ export class CustomOverlayMarker  {
     offsetAngle: 0,
     imageUrl: '',
     imageWidth: 0,
-    imageHeight: 0,
-    rotation: false
+    imageHeight: 0
   };
   private map = null;
   // private div_: any;
