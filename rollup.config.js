@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 import resolve from 'rollup-plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import sourceMaps from 'rollup-plugin-sourcemaps'
@@ -7,12 +9,18 @@ const camelCase = require('lodash.camelcase')
 const libraryName = 'travel-marker'
 
 export default {
-  entry: `compiled/${libraryName}.js`,
-  targets: [
-    { dest: pkg.main, moduleName: camelCase(libraryName), format: 'umd' },
-	  { dest: pkg.module, format: 'es' }
+  input: `compiled/${libraryName}.js`,
+  output: [
+    { file: pkg.main, name: camelCase(libraryName), format: 'umd' },
+	  { file: pkg.module, format: 'es' }
   ],
-  sourceMap: true,
+  sourcemap: true,
+  // supress this_is_undefined warning
+  onwarn: function(warning) {
+    if (warning.code === 'THIS_IS_UNDEFINED') {
+        return;
+    }
+  },
   // Indicate here external modules you don't wanna include in your bundle (i.e.: 'lodash')
   external: [],
   plugins: [
