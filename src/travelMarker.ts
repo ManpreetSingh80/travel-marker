@@ -1,14 +1,21 @@
-// declare var google: any;
-
 import { TravelMarkerOptions } from './travelMarkerOptions';
 import { Marker, MarkerOptions, google, LatLng, GoogleMap } from './google-map-types';
 import { DefaultMarker } from './defaultMarker';
 import { CustomOverlayMarker } from './customOverlayMarker';
 import { MapsEventListener } from './google-map-types';
 import { TravelEvents } from './events';
-
+/**
+ * A google maps library to replay gps locations.
+ * @author Manpreet Singh
+ * @description A google maps library to replay gps locations.
+ * @class TravelMarker
+ * * **npm package**: `travel-marker`
+ */
 export class TravelMarker {
-
+  /**
+   * Defaults for TravelMarkerOptions for constructor
+   * @private
+  */
   private defaultOptions: TravelMarkerOptions = {
     map: null,
     speed: 35,
@@ -36,6 +43,7 @@ export class TravelMarker {
   private options: TravelMarkerOptions;
   private path: any[] = [];
   private marker: DefaultMarker | CustomOverlayMarker = null;
+  /** Tells whether animation is playing or not */
   public playing = false;
   private numDelta = 0;
   private delta = null;
@@ -44,9 +52,62 @@ export class TravelMarker {
   private deltaCurr = null;
   private deltaLast = null;
   private angle = 0;
-
+  /**
+   * Use events to subscribe to animation events
+   *
+   * ### Example
+   * ```ts
+   * //  EventType = 'play' | 'paused' | 'finished' | 'reset' | 'checkpoint';
+   * // checkpoint - when marker arrives on a location present in locationArray
+   * // TravelData = {
+   * //  location: LatLng; // marker current location
+   * //  playing: boolean; // is animation playing?
+   * //  index: number;  // index in locationArray
+   * //  status: 'reset' | 'playing' | 'paused' | 'finished';  // animation status
+   * // }
+   * marker.event.onEvent((event: EventType, data: TravelData) => {
+   *   // .... do something
+   *  });
+   * ```
+   */
   public event: TravelEvents = null;
 
+  /**
+   * Creates an instance of TravelMarker.
+   *   ### Example
+   *   Create default marker
+   *   ```ts
+   *   // options
+   *   const options = {
+   *     map: map,  // map object
+   *     speed: 15,  // default 10 , animation speed
+   *     interval: 50, // default 10, marker refresh time
+   *     markerOptions: { title: "Travel Marker" }
+   *   };
+   *   let marker = new TravelMarker(options);
+   *   ```
+   *
+   *   Create default marker
+   *   ```ts
+   *   // options
+   *   const options = {
+   *     map: map,  // map object
+   *     speed: 15,  // default 10 , animation speed
+   *     interval: 50, // default 10, marker refresh time
+   *     markerType: 'overlay',  // default: 'default'
+   *     overlayOptions: {
+   *       offsetX: 0, // default: 0, x-offset for overlay
+   *       offsetY: 0, // default: 0, y-offset for overlay
+   *       offsetAngle: 0, // default: 0, rotation-offset for overlay
+   *       imageUrl: 'https://i.stack.imgur.com/lDrin.png', // image used for overlay
+   *       imageWidth: 36, // image width of overlay
+   *       imageHeight: 58, // image height of overlay
+   *     }
+   *   };
+   *   let marker = new TravelMarker(options);
+   *   ```
+   * @param {TravelMarkerOptions} options
+   */
   constructor(options: TravelMarkerOptions) {
     if (options.map === null) {
       console.log('map cannot be null');
@@ -73,20 +134,43 @@ export class TravelMarker {
   private setListener() {
     this.event = new TravelEvents(this.marker);
     this.event.onEvent((event, data) => {
-      // console.log('Event', event, data);
       this.playing = data.playing;
     });
   }
 
+  /**
+   * Get TravelMarkerOptions used at creation
+   * ### Example
+   * ```ts
+   *  marker.getOptions();
+   * ```
+   * @returns {TravelMarkerOptions}
+   */
   getOptions(): TravelMarkerOptions {
     return JSON.parse(JSON.stringify(this.options));
   }
 
-  getPosition(): LatLng | null {
+  /**
+   * Return Current position of the marker aa LatLng object.
+   * ### Example
+   * ```ts
+   * marker.getPosition(); // returns LatLng object
+   * ```
+   * @returns {(LatLng)} returns LatLng object
+   */
+  public getPosition(): LatLng {
     return this.marker ? this.marker.getPosition() : null;
   }
-
-  addLocation(locationArray: any[] = []) {
+  /**
+   * Add Location points for animation
+   * ### Example
+   * ```ts
+   * const locationArray = [new google.maps.Latlng(74,23), new google.maps.LatLng(74.02,23.02), new google.maps.LatLng(74.04, 23.04)];
+   * marker.addLocation(locationArray);
+   * ```
+   * @param {LatLng[]} [locationArray=[]]
+   */
+  public addLocation(locationArray: LatLng[] = []): void {
     locationArray.forEach(location => {
       if (location.lat && location.lng) {
         this.path.push(location);
@@ -100,55 +184,120 @@ export class TravelMarker {
         this.marker = new CustomOverlayMarker(this.options.map, this.options.overlayOptions,
            this.options.speed, this.options.interval, this.options.speedMultiplier, this.path);
       } else {
-
+        // TODO: Add symbol marker
       }
       this.setListener();
     } else if (this.marker) {
       this.marker.addLocation(locationArray);
     } else {
-      return 'Please insert valid location Array';
+      console.error('Please insert valid location Array');
     }
   }
-
-  play() {
+  /**
+   * Play Animation
+   * ### Example
+   * ```ts
+   *   marker.play();
+   * ```
+   */
+  public play() {
     this.playing = true;
     this.marker.play();
   }
-
-  pause() {
+  /**
+   * Pause Animation
+   * ### Example
+   * ```ts
+   *   marker.pause();
+   * ```
+   */
+  public pause() {
     this.playing = false;
     this.marker.pause();
   }
-
-  reset() {
+  /**
+   * Reset marker to the starting point
+   * ### Example
+   * ```ts
+   *   marker.reset();
+   * ```
+   */
+  public reset() {
     this.playing = false;
     this.marker.reset();
   }
-
-  next() {
+  /**
+   * Go to next location
+   * ### Example
+   * ```ts
+   *   marker.next();
+   * ```
+   */
+  public next() {
     this.marker.next();
   }
-
-  prev() {
+  /**
+   * Go to Previous location
+   * ### Example
+   * ```ts
+   *   marker.prev();
+   * ```
+   */
+  public prev() {
     this.marker.prev();
   }
-
-  setInterval(interval: number = this.options.interval) {
+  /**
+   * Set Maker Update interval
+   * ### Example
+   * ```ts
+   *   marker.setInterval(30);
+   * ```
+   * @param {number} [interval=this.options.interval]
+   */
+  public setInterval(interval: number = this.options.interval) {
     this.options.interval = interval;
     this.marker.setInterval(interval);
   }
-
-  setSpeedMultiplier(multiplier: number) {
+  /**
+   * Set speed multiplier to control animation speed
+   * ### Example
+   * Fast-Forward by 2X
+   * ```ts
+   * marker.setSpeedMultiplier(2);
+   * ```
+   * Rewind/Slow by 0.5X
+   * ```ts
+   * marker.setSpeedMultiplier(0.5);
+   * ```
+   * @param {number} multiplier
+   */
+  public setSpeedMultiplier(multiplier: number) {
     this.options.speedMultiplier = multiplier;
     this.marker.setSpeedMultiplier(multiplier);
   }
-
-  setSpeed(speed: number = this.options.speed) {
+  /**
+   * Set Animation Speed
+   * ### Example
+   * ```ts
+   *   marker.setSpeed(100);
+   * ```
+   * @param {number} [speed=this.options.speed]
+   */
+  public setSpeed(speed: number = this.options.speed) {
     this.options.speed = speed;
     this.marker.setSpeed(speed);
   }
-
-  setMarkerOptions(options: MarkerOptions = this.options.markerOptions) {
+  /**
+   * Set Marker options like opacity etc. Only applicable for default marker types.
+   * Returns false if not applicable
+   *  ### Example
+   * ```ts
+   *  marker.setMarkerOptions({ opacity: 0.8 });
+   * ```
+   * @param {MarkerOptions} [options=this.options.markerOptions]
+   * @returns {boolean}  returns false if not applicable
+   */
+  private setMarkerOptions(options: MarkerOptions = this.options.markerOptions): boolean {
     if (this.options.markerType === 'default') {
       this.options.markerOptions = Object.assign(this.options.markerOptions, options);
       this.marker.setOptions(this.options.markerOptions);
@@ -157,8 +306,17 @@ export class TravelMarker {
       return false;
     }
   }
-
-  setOverlayOptions(options: any) {
+  /**
+   * Set Overlay Options like offsets. Only applicable for overlay.
+   * Returns false if not applicable
+   * ### Example
+   * ```ts
+   *   marker.setOverlayOptions({ offsetAngle: 90 });
+   * ```
+   * @param {*} options
+   * @returns {boolean}  returns false if not applicable
+   */
+  private setOverlayOptions(options: any): boolean {
     if (this.options.markerType === 'overlay') {
       this.marker.setOptions(options);
       return true;
@@ -167,15 +325,35 @@ export class TravelMarker {
     }
   }
 
-  setMap(map: GoogleMap) {
+  /**
+   * Set map of marker. Useful for show/hide and deletion.
+   * ### Example
+   * ```ts
+   *   marker.setMap(null);
+   * ```
+   * @param {GoogleMap} map
+   */
+  public setMap(map: GoogleMap) {
     this.marker.setMap(map);
   }
 
-  addListener(eventName: string, handler: Function): any {
+  /**
+   * Add Listener to maker events like click, mouseover etc.
+   *
+   * ### Example - Listen for click events
+   * ```ts
+   * marker.addListener('click', () => {
+   *     // do something...
+   *   })
+   * ```
+   * @param {string} eventName - click,mousover,mouseout etc.
+   * @param {Function} handler handler function
+   */
+  public addListener(eventName: string, handler: Function): any {
     if (!this.marker) {
       setTimeout(() => this.addListener(eventName, handler), 300);
     } else {
-      return this.marker.addListener(eventName, handler);
+      this.marker.addListener(eventName, handler);
     }
   }
 

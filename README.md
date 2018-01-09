@@ -42,6 +42,7 @@ For browser
     map: map,  // map object
     speed: 15,  // default 10 , animation speed
     interval: 50, // default 10, marker refresh time
+    markerType: 'default',  // default: 'default'
     markerOptions: { title: "Travel Marker" }
   };
   var marker = new TravelMarker(options);
@@ -55,6 +56,7 @@ For browser
     map: map,  // map object
     speed: 15,  // default 10 , animation speed
     interval: 50, // default 10, marker refresh time
+    markerType: 'overlay',  // default: 'default'
     overlayOptions: {
       offsetX: 0, // default: 0, x-offset for overlay
       offsetY: 0, // default: 0, y-offset for overlay
@@ -137,10 +139,15 @@ marker.event.onEvent((event: EventType, data: TravelData) => {
 });
 ```
 
+### Set Map on marker
+```typescript
+marker.setMap(null);  // hide marker from map
+```
+
 ## Todo
 - [x] Add listeners to marker like click,hover etc.
 - [x] Add Examples
-- [ ] Implement setMarkerOptions()
-- [ ] Add jsdoc
+- [ ] Implement setMarkerOptions() and setOverlayOptions()
+- [x] Add jsdoc
 - [x] Custom events for play, pause, finished, checkpoint
 - [x] Add custom overlay markers with rotation
