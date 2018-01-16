@@ -1,13 +1,19 @@
 # Travel Marker
 
-A google maps library to replay gps locations.
+A google maps library to replay gps locations with animations.
 
-# NOTE
-### THIS IS AN ALPHA RELEASE AND API WILL CHANGE IN FUTURE. NOT SUITABLE FOR PRODUCTION PROJECTS.
+![Example](https://i.imgur.com/1dRxPfe.gif)
 
 ## Features
-- Play/Pause animation
+- An out-of-box solution with minimum configuration.
 - Compute intermediate gps points for smooth animation
+- Animation Controls
+  - Play/Pause
+  - Next/Previous
+  - Fast-Forward/Rewind
+  - Reset
+- Listen marker events like touch,mouseover etc.
+- Listen Animation events like paused,finished etc.
 
 ## Demo
 
@@ -40,8 +46,9 @@ For browser
   // options
   var options = {
     map: map,  // map object
-    speed: 15,  // default 10 , animation speed
-    interval: 50, // default 10, marker refresh time
+    speed: 50,  // default 10 , animation speed
+    interval: 30, // default 10, marker refresh time
+    speedMultiplier: 1, // default 1, for fast-forward/rewind
     markerType: 'default',  // default: 'default'
     markerOptions: { title: "Travel Marker" }
   };
@@ -54,8 +61,9 @@ For browser
   // options
   var options = {
     map: map,  // map object
-    speed: 15,  // default 10 , animation speed
-    interval: 50, // default 10, marker refresh time
+    speed: 50,  // default 10 , animation speed
+    interval: 30, // default 10, marker refresh time
+    speedMultiplier: 1, // default 1, for fast-forward/rewind
     markerType: 'overlay',  // default: 'default'
     overlayOptions: {
       offsetX: 0, // default: 0, x-offset for overlay
@@ -161,5 +169,5 @@ marker.setOverlayOptions({ offsetAngle: 90 });
 - [x] Add jsdoc
 - [x] Custom events for play, pause, finished, checkpoint
 - [x] Add custom overlay markers with rotation
-- [ ] Add images
+- [x] Add images
 - [ ] Write test cases

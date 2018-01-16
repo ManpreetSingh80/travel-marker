@@ -4,9 +4,9 @@ import { CustomOverlayMarker } from './customOverlayMarker';
 import { TravelEvents } from './events';
 
 /**
- * A google maps library to replay gps locations.
+ * A google maps library to replay gps locations with animations.
  * @author Manpreet Singh
- * @description A google maps library to replay gps locations.
+ * @description A google maps library to replay gps locations with animations.
  * @class TravelMarker
  * * **npm package**: `travel-marker`
  */
@@ -79,8 +79,9 @@ export class TravelMarker {
    *   // options
    *   const options = {
    *     map: map,  // map object
-   *     speed: 15,  // default 10 , animation speed
-   *     interval: 50, // default 10, marker refresh time
+   *     speed: 50,  // default 10 , animation speed
+   *     interval: 30, // default 10, marker refresh time
+   *     speedMultiplier: 1, // default 1, for fast-forward/rewind
    *     markerOptions: { title: "Travel Marker" }
    *   };
    *   let marker = new TravelMarker(options);
@@ -91,8 +92,9 @@ export class TravelMarker {
    *   // options
    *   const options = {
    *     map: map,  // map object
-   *     speed: 15,  // default 10 , animation speed
-   *     interval: 50, // default 10, marker refresh time
+   *     speed: 50,  // default 10 , animation speed
+   *     interval: 30, // default 10, marker refresh time
+   *     speedMultiplier: 1, // default 1, for fast-forward/rewind
    *     markerType: 'overlay',  // default: 'default'
    *     overlayOptions: {
    *       offsetX: 0, // default: 0, x-offset for overlay
