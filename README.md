@@ -144,10 +144,22 @@ marker.event.onEvent((event: EventType, data: TravelData) => {
 marker.setMap(null);  // hide marker from map
 ```
 
+### Set MarkerOptions
+```typescript
+marker.setMarkerOptions({ opacity: 0.8 });
+```
+
+### Set Overlay Options
+```typescript
+marker.setOverlayOptions({ offsetAngle: 90 });
+```
+
 ## Todo
 - [x] Add listeners to marker like click,hover etc.
 - [x] Add Examples
-- [ ] Implement setMarkerOptions() and setOverlayOptions()
+- [x] Implement setMarkerOptions() and setOverlayOptions()
 - [x] Add jsdoc
 - [x] Custom events for play, pause, finished, checkpoint
 - [x] Add custom overlay markers with rotation
+- [ ] Add images
+- [ ] Write test cases

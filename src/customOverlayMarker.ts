@@ -1,13 +1,12 @@
-import { Marker, MarkerOptions, OverlayView, LatLng, GoogleMap } from './google-map-types';
+import { Marker, MarkerOptions, OverlayView, LatLng, GoogleMap, OverlayOptions, TravelData, EventType } from './models';
 import { latlngDistance, getAngle } from './utils';
-import { TravelEvents, TravelData, EventType } from './events';
+import { TravelEvents } from './events';
 
 declare var google: any;
 
-
 export class CustomOverlayMarker  {
   private marker = null;
-  private overlayOptions = {
+  private overlayOptions: OverlayOptions = {
     offsetX: 0,
     offsetY: 0,
     offsetAngle: 0,
@@ -16,9 +15,7 @@ export class CustomOverlayMarker  {
     imageHeight: 0
   };
   private map = null;
-  // private div_: any;
   private angle = 0;
-  // private position: any;
 
   private path: any[] = [];
   public playing = false;
@@ -33,7 +30,7 @@ export class CustomOverlayMarker  {
   private speedMultiplier = 1;
   private eventEmitter: TravelEvents = null;
 
-  constructor(map: any, overlayOptions: any, speed: number, interval: number, speedMultiplier: number, path: any[]) {
+  constructor(map: any, overlayOptions: OverlayOptions, speed: number, interval: number, speedMultiplier: number, path: any[]) {
     this.map = map;
     this.overlayOptions = overlayOptions;
     this.speed = speed;
@@ -71,6 +68,10 @@ export class CustomOverlayMarker  {
       const panes = marker.getPanes();
       panes.overlayMouseTarget.appendChild(div);
 
+    };
+
+    marker.setOverlayOptions = function(options: OverlayOptions) {
+      marker.overlayOptions = options;
     };
 
     marker.setPosition = function(pos) {
@@ -192,8 +193,9 @@ export class CustomOverlayMarker  {
     this.speedMultiplier = multiplier;
   }
 
-  setOptions(overlayOptions: any = this.overlayOptions) {
-    // this.marker.setOp
+  updateOptions(overlayOptions: any): void {
+    this.overlayOptions = Object.assign(this.overlayOptions, overlayOptions);
+    this.marker.setOverlayOptions(this.overlayOptions);
   }
 
   // animation

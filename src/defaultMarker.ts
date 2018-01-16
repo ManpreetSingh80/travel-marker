@@ -1,6 +1,6 @@
-import { Marker, MarkerOptions, MarkerLabel, GoogleMap, LatLng, LatLngLiteral, MapsEventListener } from './google-map-types';
+import { Marker, MarkerOptions, MarkerLabel, GoogleMap, LatLng, LatLngLiteral, MapsEventListener, TravelData, EventType } from './models';
 import { latlngDistance, getAngle } from './utils';
-import { TravelEvents, TravelData, EventType } from './events';
+import { TravelEvents } from './events';
 
 declare var google: any;
 
@@ -110,6 +110,9 @@ export class DefaultMarker implements Marker {
   setClickable(clickable: boolean): void {
     this.marker.setClickable(clickable);
   }
+  setOptions(options: MarkerOptions): void {
+    this.marker.setOptions(options);
+  }
 
   addListener(eventName: string, handler: Function): MapsEventListener {
     if (!this.marker) {
@@ -131,16 +134,17 @@ export class DefaultMarker implements Marker {
     this.speedMultiplier = multiplier;
   }
 
-  setOptions(markerOptions: any = this.markerOptions) {
-    // this.marker.setOp
-  }
-
   addLocation(locationArray: any[] = []) {
     locationArray.forEach(location => {
       if (location.lat && location.lng) {
         this.path.push(location);
       }
     });
+  }
+
+  updateOptions(markerOptions: any): void {
+    this.markerOptions = Object.assign(this.markerOptions, markerOptions);
+    this.setOptions(this.markerOptions);
   }
 
   // animation

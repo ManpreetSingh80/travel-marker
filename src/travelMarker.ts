@@ -1,9 +1,8 @@
-import { TravelMarkerOptions } from './travelMarkerOptions';
-import { Marker, MarkerOptions, google, LatLng, GoogleMap } from './google-map-types';
+import { Marker, MarkerOptions, google, LatLng, GoogleMap, MapsEventListener, TravelMarkerOptions } from './models';
 import { DefaultMarker } from './defaultMarker';
 import { CustomOverlayMarker } from './customOverlayMarker';
-import { MapsEventListener } from './google-map-types';
 import { TravelEvents } from './events';
+
 /**
  * A google maps library to replay gps locations.
  * @author Manpreet Singh
@@ -297,10 +296,10 @@ export class TravelMarker {
    * @param {MarkerOptions} [options=this.options.markerOptions]
    * @returns {boolean}  returns false if not applicable
    */
-  private setMarkerOptions(options: MarkerOptions = this.options.markerOptions): boolean {
+  public setMarkerOptions(options: MarkerOptions = this.options.markerOptions): boolean {
     if (this.options.markerType === 'default') {
       this.options.markerOptions = Object.assign(this.options.markerOptions, options);
-      this.marker.setOptions(this.options.markerOptions);
+      this.marker.updateOptions(this.options.markerOptions);
       return true;
     } else {
       return false;
@@ -313,12 +312,13 @@ export class TravelMarker {
    * ```ts
    *   marker.setOverlayOptions({ offsetAngle: 90 });
    * ```
-   * @param {*} options
+   * @param {OverlayOptions} options  Overlay Options
    * @returns {boolean}  returns false if not applicable
    */
-  private setOverlayOptions(options: any): boolean {
+  public setOverlayOptions(options: any): boolean {
     if (this.options.markerType === 'overlay') {
-      this.marker.setOptions(options);
+      this.options.overlayOptions = Object.assign(this.options.overlayOptions, options);
+      this.marker.updateOptions(this.options.overlayOptions);
       return true;
     } else {
       return false;
