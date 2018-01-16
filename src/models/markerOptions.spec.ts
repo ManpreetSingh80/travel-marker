@@ -5,10 +5,11 @@
 //     this.name = name;
 //   }
 import { TravelMarkerOptions } from '../travel-marker';
+
 declare var google: any;
 
 export const defaultMarkerOptions: TravelMarkerOptions =  {
-  map: google.map,
+  map: null,
   speed: 10,
   interval: 300,
   speedMultiplier: 1,

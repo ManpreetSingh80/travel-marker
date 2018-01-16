@@ -48,6 +48,7 @@ export interface Marker extends MVCObject {
   setZIndex(zIndex: number): void;
   setAnimation(animation: any): void;
   setClickable(clickable: boolean): void;
+  setOptions(options: MarkerOptions): void;
 }
 
 export interface MarkerOptions {

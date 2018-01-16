@@ -1,16 +1,7 @@
 import { EventEmitter, Listener } from './typed-event-emitter';
-import { LatLng } from './google-map-types';
+import { TravelData, EventType } from './models';
 import { DefaultMarker } from './defaultMarker';
 import { CustomOverlayMarker } from './customOverlayMarker';
-
-export interface TravelData {
-  location: LatLng;
-  playing: boolean;
-  index: number;
-  status: 'reset' | 'playing' | 'paused' | 'finished';
-}
-
-export type EventType = 'play' | 'paused' | 'finished' | 'reset' | 'checkpoint';
 
 export class TravelEvents extends EventEmitter {
 

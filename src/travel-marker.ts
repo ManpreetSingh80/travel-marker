@@ -1,7 +1,7 @@
 import { TravelMarker } from './travelMarker';
-import { TravelMarkerOptions } from './travelMarkerOptions';
+import { TravelMarkerOptions, OverlayOptions, EventType, TravelData } from './models';
 import { DefaultMarker } from './defaultMarker';
 import { CustomOverlayMarker } from './customOverlayMarker';
-import { TravelData, TravelEvents, EventType } from './events';
+import { TravelEvents } from './events';
 
-export { TravelMarker, TravelMarkerOptions, DefaultMarker, CustomOverlayMarker, TravelData, TravelEvents, EventType };
+export { TravelMarker, TravelMarkerOptions, DefaultMarker, CustomOverlayMarker, TravelData, TravelEvents, EventType, OverlayOptions };

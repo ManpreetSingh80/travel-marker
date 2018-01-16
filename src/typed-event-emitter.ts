@@ -52,7 +52,7 @@ export class EventEmitter {
   removeListener() {
     if (arguments.length === 0) {
       this.eventListeners.clear();
-    } else if (arguments.length === 1 && typeof arguments[0] == 'object') {
+    } else if (arguments.length === 1 && typeof arguments[0] === 'object') {
       const id = arguments[0];
       this.removeListener(id.event, id.listener);
     } else if (arguments.length >= 1) {
@@ -62,7 +62,7 @@ export class EventEmitter {
       if (this.eventListeners.has(event)) {
         const listeners = this.eventListeners.get(event);
         let idx;
-        while (!listener || (idx = listeners.indexOf(listener)) != -1) {
+        while (!listener || (idx = listeners.indexOf(listener)) !== -1) {
           listeners.splice(idx, 1);
         }
       }
