@@ -1,5 +1,7 @@
 export let google: any;
 
+export let MVCObject;
+
 export interface GoogleMap extends MVCObject {
   data?: Data;
   // constructor(el: HTMLElement, opts?: MapOptions): void;

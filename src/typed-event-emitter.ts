@@ -24,6 +24,18 @@
  * EALINGS IN THE SOFTWARE.                                                   *
  ******************************************************************************/
 
+ export class Listener {
+  constructor(public owner: EventEmitter,
+    public event: Function,
+    public listener: Function) {
+
+  }
+
+  unbind() {
+    this.owner.removeListener(this);
+  }
+}
+
 export class EventEmitter {
   private eventListeners: Map<Function, Function[]>;
 
@@ -74,7 +86,7 @@ export class EventEmitter {
    */
   protected emit(event: Function, ...args) {
     if (this.eventListeners.has(event)) {
-      for (let listener of this.eventListeners.get(event)) {
+      for (const listener of this.eventListeners.get(event)) {
         listener(...args);
       }
     }
@@ -89,17 +101,5 @@ export class EventEmitter {
     };
 
     return eventBinder;
-  }
-}
-
-export class Listener {
-  constructor(public owner: EventEmitter,
-    public event: Function,
-    public listener: Function) {
-
-  }
-
-  unbind() {
-    this.owner.removeListener(this);
   }
 }
