@@ -72,6 +72,7 @@ export class CustomOverlayMarker  {
 
     marker.setOverlayOptions = function(options: OverlayOptions) {
       marker.overlayOptions = options;
+      marker.draw();
     };
 
     marker.setPosition = function(pos) {
