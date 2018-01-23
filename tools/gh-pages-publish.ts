@@ -3,10 +3,10 @@ const { readFileSync } = require('fs');
 const url = require('url');
 
 let repoUrl, authorName, authorEmail;
-let pkg = JSON.parse(readFileSync('package.json') as any)
+let pkg = JSON.parse(readFileSync('package.json') as any);
 if (typeof pkg.repository === 'object') {
   if (!pkg.repository.hasOwnProperty('url')) {
-    throw new Error('URL does not exist in repository section')
+    throw new Error('URL does not exist in repository section');
   }
   const author: string = pkg.author;
   authorName = author.substring(0, author.indexOf('<'));
@@ -16,7 +16,7 @@ if (typeof pkg.repository === 'object') {
   repoUrl = pkg.repository;
 }
 
-let parsedUrl = url.parse(repoUrl)
+let parsedUrl = url.parse(repoUrl);
 let repository = (parsedUrl.host || '') + (parsedUrl.path || '');
 let ghToken = process.env.GH_TOKEN;
 
@@ -27,7 +27,7 @@ exec('git init');
 exec('git add .');
 exec(`git config user.name "${authorName}"`);
 exec(`git config user.email "${authorEmail}"`);
-exec('git commit -m "docs(docs): update gh-pages"')
+exec('git commit -m "docs(docs): update gh-pages"');
 exec(
   `git push --force --quiet "https://${repository}" master:gh-pages`
 );

@@ -73,9 +73,12 @@ export class TravelMarker {
 
   /**
    * Creates an instance of TravelMarker.
+   *
    *   ### Example
-   *   Create default marker
-   *   ```ts
+   *
+   * Create default marker
+   *
+   *  ```ts
    *   // options
    *   const options = {
    *     map: map,  // map object
@@ -87,7 +90,8 @@ export class TravelMarker {
    *   let marker = new TravelMarker(options);
    *   ```
    *
-   *   Create default marker
+   *   Create Overlay marker
+   *
    *   ```ts
    *   // options
    *   const options = {
@@ -167,6 +171,7 @@ export class TravelMarker {
    * ### Example
    * ```ts
    * const locationArray = [new google.maps.Latlng(74,23), new google.maps.LatLng(74.02,23.02), new google.maps.LatLng(74.04, 23.04)];
+   *
    * marker.addLocation(locationArray);
    * ```
    * @param {LatLng[]} [locationArray=[]]
@@ -266,6 +271,7 @@ export class TravelMarker {
    * ```ts
    * marker.setSpeedMultiplier(2);
    * ```
+   *
    * Rewind/Slow by 0.5X
    * ```ts
    * marker.setSpeedMultiplier(0.5);
