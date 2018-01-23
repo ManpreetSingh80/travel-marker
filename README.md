@@ -52,6 +52,7 @@ For browser
     speed: 50,  // default 10 , animation speed
     interval: 30, // default 10, marker refresh time
     speedMultiplier: 1, // default 1, for fast-forward/rewind
+    cameraOnMarker: false,  // default false, move camera with marker
     markerType: 'default',  // default: 'default'
     markerOptions: { title: "Travel Marker" }
   };
@@ -67,6 +68,7 @@ For browser
     speed: 50,  // default 10 , animation speed
     interval: 30, // default 10, marker refresh time
     speedMultiplier: 1, // default 1, for fast-forward/rewind
+    cameraOnMarker: false,  // default false, move camera with marker
     markerType: 'overlay',  // default: 'default'
     overlayOptions: {
       offsetX: 0, // default: 0, x-offset for overlay

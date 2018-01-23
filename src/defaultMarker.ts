@@ -19,11 +19,13 @@ export class DefaultMarker implements Marker {
   private speed = 0;
   private interval = 0;
   private speedMultiplier = 1;
+  private cameraOnMarker = false;
   private markerOptions = {};
   private eventEmitter: TravelEvents = null;
 
-  constructor(markerOptions: MarkerOptions, speed: number, interval: number, speedMultiplier: number, path: any[]) {
-    console.log(markerOptions, speed, interval, path);
+  constructor(markerOptions: MarkerOptions, speed: number, interval: number, speedMultiplier: number, path: any[],
+     cameraOnMarker: boolean) {
+    console.log(markerOptions, speed, interval, path, cameraOnMarker);
     this.marker =  <Marker> new google.maps.Marker(markerOptions);
     console.log(this.marker);
     this.markerOptions = markerOptions;
@@ -31,6 +33,7 @@ export class DefaultMarker implements Marker {
     this.interval = interval;
     this.speedMultiplier = speedMultiplier;
     this.path = path;
+    this.cameraOnMarker = cameraOnMarker;
     return this;
   }
 
@@ -81,6 +84,9 @@ export class DefaultMarker implements Marker {
     this.marker.setMap(map);
   }
   setPosition(latLng: LatLng|LatLngLiteral): void {
+    if (this.cameraOnMarker) {
+      this.getMap().setCenter(latLng);
+    }
     this.marker.setPosition(latLng);
   }
   setTitle(title: string): void {
@@ -174,7 +180,7 @@ export class DefaultMarker implements Marker {
     this.playing = false;
     this.index = 0;
     this.delta = null;
-    this.marker.setPosition(this.path[this.index]);
+    this.setPosition(this.path[this.index]);
     this.eventEmitter.emitEvent('reset', {
       location: this.marker.getPosition(),
       status: 'reset',
@@ -190,7 +196,7 @@ export class DefaultMarker implements Marker {
 
     this.index++;
     this.delta = null;
-    this.marker.setPosition(this.path[this.index]);
+    this.setPosition(this.path[this.index]);
   }
 
   prev() {
@@ -200,7 +206,7 @@ export class DefaultMarker implements Marker {
 
     this.index--;
     this.delta = null;
-    this.marker.setPosition(this.path[this.index]);
+    this.setPosition(this.path[this.index]);
   }
 
 
@@ -268,7 +274,7 @@ export class DefaultMarker implements Marker {
     this.deltaCurr.lng += this.delta.lng * Math.ceil(this.speedMultiplier);
     const newPos = { lat: this.deltaCurr.lat, lng: this.deltaCurr.lng };
     // console.log('new pos', newPos, this.deltaIndex);
-    this.marker.setPosition(newPos);
+    this.setPosition(newPos);
     const nextIndex = this.deltaIndex + Math.ceil(this.speedMultiplier);
     // console.log('nextIndex', nextIndex,  Math.ceil(1 / this.speedMultiplier));
     if (nextIndex < this.numDelta) {
@@ -277,7 +283,7 @@ export class DefaultMarker implements Marker {
     } else {
       console.log('last', this.deltaLast);
       setTimeout(() => {
-        this.marker.setPosition(this.deltaLast);
+        this.setPosition(this.deltaLast);
         this.updateMarker();
       }, this.interval * Math.ceil(1 / this.speedMultiplier));
     }

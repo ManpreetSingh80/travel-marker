@@ -21,6 +21,7 @@ export class TravelMarker {
     interval: 20,
     speedMultiplier: 1,
     markerType: 'default',
+    cameraOnMarker: false,
     markerOptions: {
       position: { lat: 0, lng: 0 }
     },
@@ -85,6 +86,7 @@ export class TravelMarker {
    *     speed: 50,  // default 10 , animation speed
    *     interval: 30, // default 10, marker refresh time
    *     speedMultiplier: 1, // default 1, for fast-forward/rewind
+   *     cameraOnMarker: false,  // default false, move camera with marker
    *     markerOptions: { title: "Travel Marker" }
    *   };
    *   let marker = new TravelMarker(options);
@@ -99,6 +101,7 @@ export class TravelMarker {
    *     speed: 50,  // default 10 , animation speed
    *     interval: 30, // default 10, marker refresh time
    *     speedMultiplier: 1, // default 1, for fast-forward/rewind
+   *     cameraOnMarker: false,  // default false, move camera with marker
    *     markerType: 'overlay',  // default: 'default'
    *     overlayOptions: {
    *       offsetX: 0, // default: 0, x-offset for overlay
@@ -185,10 +188,11 @@ export class TravelMarker {
     if (!this.marker && this.path.length) {
       if (this.options.markerType === 'default') {
         const markerOptions = Object.assign(this.options.markerOptions, { position: { lat: this.path[0].lat(), lng: this.path[0].lng() } });
-        this.marker = new DefaultMarker(markerOptions, this.options.speed, this.options.interval, this.options.speedMultiplier, this.path);
+        this.marker = new DefaultMarker(markerOptions, this.options.speed, this.options.interval, this.options.speedMultiplier,
+           this.path, this.options.cameraOnMarker);
       } else if (this.options.markerType === 'overlay') {
         this.marker = new CustomOverlayMarker(this.options.map, this.options.overlayOptions,
-           this.options.speed, this.options.interval, this.options.speedMultiplier, this.path);
+           this.options.speed, this.options.interval, this.options.speedMultiplier, this.path, this.options.cameraOnMarker);
       } else {
         // TODO: Add symbol marker
       }

@@ -28,15 +28,18 @@ export class CustomOverlayMarker  {
   private speed = 0;
   private interval = 0;
   private speedMultiplier = 1;
+  private cameraOnMarker = false;
   private eventEmitter: TravelEvents = null;
 
-  constructor(map: any, overlayOptions: OverlayOptions, speed: number, interval: number, speedMultiplier: number, path: any[]) {
+  constructor(map: any, overlayOptions: OverlayOptions, speed: number, interval: number, speedMultiplier: number,
+     path: any[], cameraOnMarker: boolean) {
     this.map = map;
     this.overlayOptions = overlayOptions;
     this.speed = speed;
     this.interval = interval;
     this.speedMultiplier = speedMultiplier;
     this.path = path;
+    this.cameraOnMarker = cameraOnMarker;
     const position = path[0];
     this.angle = path.length > 1 ? getAngle(path[0], path[1]) * 180 / Math.PI : 0;
 
@@ -47,6 +50,7 @@ export class CustomOverlayMarker  {
     marker.overlayOptions = this.overlayOptions;
     marker.angle = this.angle;
     marker.position = position;
+    marker.cameraOnMarker = cameraOnMarker;
 
     marker.onAdd = function() {
       const div = document.createElement('DIV');
@@ -76,6 +80,9 @@ export class CustomOverlayMarker  {
     };
 
     marker.setPosition = function(pos) {
+      if (marker.cameraOnMarker) {
+        marker.getMap().setCenter(pos);
+      }
       if (typeof pos.lat === 'function' || typeof pos.lng === 'function') {
         marker.position = pos;
       } else {

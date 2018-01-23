@@ -5,6 +5,7 @@ export interface TravelMarkerOptions {
   speed?: number;
   interval?: number;
   speedMultiplier?: number;
+  cameraOnMarker?: boolean;
   markerType?: 'default' | 'symbol' | 'overlay';
   markerOptions?: MarkerOptions;
   overlayOptions?: {
