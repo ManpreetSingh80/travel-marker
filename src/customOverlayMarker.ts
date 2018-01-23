@@ -233,7 +233,9 @@ export class CustomOverlayMarker  {
     this.playing = false;
     this.index = 0;
     this.delta = null;
+    this.angle = this.path.length > 1 ? getAngle(this.path[0], this.path[1]) * 180 / Math.PI : 0;
     this.marker.setPosition(this.path[this.index]);
+    this.marker.setAngle(this.angle);
     this.eventEmitter.emitEvent('reset', {
       location: this.marker.getPosition(),
       status: 'reset',
