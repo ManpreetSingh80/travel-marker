@@ -84,7 +84,7 @@ For browser
 
 ### Add locations
 ```typescript
-  var locationArray = [new google.maps.Latlng(74,23), new google.maps.LatLng(74.02,23.02), new google.maps.LatLng(74.04, 23.04)];
+  var locationArray = [new google.maps.LatLng(74,23), new google.maps.LatLng(74.02,23.02), new google.maps.LatLng(74.04, 23.04)];
   marker.addLocations(locationArray);
 ```
 
