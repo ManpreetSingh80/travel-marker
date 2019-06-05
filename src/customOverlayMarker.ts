@@ -124,6 +124,7 @@ export class CustomOverlayMarker  {
         div.style.height = `${marker.overlayOptions.imageHeight}px`;
         div.style.transform = 'rotate(' + marker.angle + marker.overlayOptions.offsetAngle + 'deg)';
         div.children[0].src =  marker.overlayOptions.imageUrl;
+        div.className = marker.overlayOptions.class;
         // div.style.zIndex = '9999999';
         // marker.div_ = div;
       }
