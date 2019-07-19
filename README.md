@@ -138,7 +138,7 @@ marker.addListener('click', function() {
 
 ### Listen Events
 ```typescript
-/*  EventType = 'play' | 'paused' | 'finished' | 'reset' | 'checkpoint'; 
+/*  EventType = 'play' | 'paused' | 'finished' | 'reset' | 'checkpoint' | 'previous' | 'next'; 
     // checkpoint - when marker arrives on a location present in locationArray
     TravelData = {
       location: LatLng; // marker current location
