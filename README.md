@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ManpreetSingh80/travel-marker.svg?branch=master)](https://travis-ci.org/ManpreetSingh80/travel-marker)
+[![npm](https://img.shields.io/npm/v/travel-marker.svg)](https://www.npmjs.com/package/travel-marker)
 [![NPM Downloads](https://img.shields.io/npm/dt/travel-marker.svg?style=flat)](https://www.npmjs.com/package/travel-marker)
 
 # Travel Marker
