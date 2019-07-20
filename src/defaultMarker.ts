@@ -197,6 +197,12 @@ export class DefaultMarker implements Marker {
     this.index++;
     this.delta = null;
     this.setPosition(this.path[this.index]);
+    this.eventEmitter.emitEvent('next', {
+      location: this.marker.getPosition(),
+      status: 'playing',
+      playing: this.playing,
+      index: this.index
+    });
   }
 
   prev() {
@@ -207,6 +213,12 @@ export class DefaultMarker implements Marker {
     this.index--;
     this.delta = null;
     this.setPosition(this.path[this.index]);
+    this.eventEmitter.emitEvent('previous', {
+      location: this.marker.getPosition(),
+      status: 'playing',
+      playing: this.playing,
+      index: this.index
+    });
   }
 
 
