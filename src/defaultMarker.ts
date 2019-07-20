@@ -25,9 +25,9 @@ export class DefaultMarker implements Marker {
 
   constructor(markerOptions: MarkerOptions, speed: number, interval: number, speedMultiplier: number, path: any[],
      cameraOnMarker: boolean) {
-    console.log(markerOptions, speed, interval, path, cameraOnMarker);
+    // console.log(markerOptions, speed, interval, path, cameraOnMarker);
     this.marker =  <Marker> new google.maps.Marker(markerOptions);
-    console.log(this.marker);
+    // console.log(this.marker);
     this.markerOptions = markerOptions;
     this.speed = speed;
     this.interval = interval;
@@ -85,7 +85,7 @@ export class DefaultMarker implements Marker {
   }
   setPosition(latLng: LatLng|LatLngLiteral): void {
     if (this.cameraOnMarker) {
-      this.getMap().setCenter(latLng);
+      this.getMap().panTo(latLng);
     }
     this.marker.setPosition(latLng);
   }
@@ -281,7 +281,7 @@ export class DefaultMarker implements Marker {
       this.deltaIndex = nextIndex;
       setTimeout(() => this.animate(), this.interval * Math.ceil(1 / this.speedMultiplier));
     } else {
-      console.log('last', this.deltaLast);
+      // console.log('last', this.deltaLast);
       setTimeout(() => {
         this.setPosition(this.deltaLast);
         this.updateMarker();

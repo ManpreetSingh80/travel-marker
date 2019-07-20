@@ -118,7 +118,7 @@ export class TravelMarker {
    */
   constructor(options: TravelMarkerOptions) {
     if (options.map === null) {
-      console.log('map cannot be null');
+      console.error('map cannot be null');
       return;
     }
     options = Object.assign(this.defaultOptions, options);
