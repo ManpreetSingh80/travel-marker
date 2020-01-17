@@ -62,7 +62,7 @@
     "@types/node": "^10.11.0",
     "codelyzer": "^5.1.0",
     "colors": "^1.1.2",
-    "cross-env": "^5.0.1",
+    "cross-env": "^6.0.3",
     "husky": "^1.0.0",
     "jest": "^23.0.0",
     "lint-staged": "^6.0.0",
